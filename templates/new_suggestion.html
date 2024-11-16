@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html data-bs-theme="auto" lang="en">
+
+<head>
+  <script src="{{ url_for('static', filename='js/color-modes.js') }}"></script>
+  <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+  <link href="{{ url_for('static', filename='css/shared.css') }}" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1" name="viewport" />
+  <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}">
+  </script>
+  <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet" />
+  <link href="{{ url_for('static', filename='css/bootstrap-docs.css') }}" rel="stylesheet" />
+  <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.css" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"> </script>
+  <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" type="text/javascript"></script>
+  <title>
+    New Suggestion
+  </title>
+</head>
+
+<body class="bg-body-tertiary">
+  <svg class="d-none" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="check2" viewbox="0 0 16 16">
+      <path
+        d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z">
+      </path>
+    </symbol>
+    <symbol id="circle-half" viewbox="0 0 16 16">
+      <path d="M8 15A7 7 0 1 0 8 1v14zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16z">
+      </path>
+    </symbol>
+    <symbol id="moon-stars-fill" viewbox="0 0 16 16">
+      <path
+        d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z">
+      </path>
+      <path
+        d="M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387a1.734 1.734 0 0 0-1.097 1.097l-.387 1.162a.217.217 0 0 1-.412 0l-.387-1.162A1.734 1.734 0 0 0 9.31 6.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387a1.734 1.734 0 0 0 1.097-1.097l.387-1.162zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.156 1.156 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.156 1.156 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732L13.863.1z">
+      </path>
+    </symbol>
+    <symbol id="sun-fill" viewbox="0 0 16 16">
+      <path
+        d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z">
+      </path>
+    </symbol>
+  </svg>
+  <div class="dropdown position-fixed bottom-0 end-0 mb-3 me-3 bd-mode-toggle">
+    <button aria-expanded="false" aria-label="Toggle theme (auto)"
+      class="btn btn-bd-primary py-2 dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown" id="bd-theme"
+      type="button">
+      <svg class="bi my-1 theme-icon-active" height="1em" width="1em">
+        <use href="#circle-half">
+        </use>
+      </svg>
+      <span class="visually-hidden" id="bd-theme-text">
+        Toggle theme
+      </span>
+    </button>
+    <ul aria-labelledby="bd-theme-text" class="dropdown-menu dropdown-menu-end shadow">
+      <li>
+        <button aria-pressed="false" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light"
+          type="button">
+          <svg class="bi me-2 opacity-50 theme-icon" height="1em" width="1em">
+            <use href="#sun-fill">
+            </use>
+          </svg>
+          Light
+          <svg class="bi ms-auto d-none" height="1em" width="1em">
+            <use href="#check2">
+            </use>
+          </svg>
+        </button>
+      </li>
+      <li>
+        <button aria-pressed="false" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark"
+          type="button">
+          <svg class="bi me-2 opacity-50 theme-icon" height="1em" width="1em">
+            <use href="#moon-stars-fill">
+            </use>
+          </svg>
+          Dark
+          <svg class="bi ms-auto d-none" height="1em" width="1em">
+            <use href="#check2">
+            </use>
+          </svg>
+        </button>
+      </li>
+      <li>
+        <button aria-pressed="true" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto"
+          type="button">
+          <svg class="bi me-2 opacity-50 theme-icon" height="1em" width="1em">
+            <use href="#circle-half">
+            </use>
+          </svg>
+          Auto
+          <svg class="bi ms-auto d-none" height="1em" width="1em">
+            <use href="#check2">
+            </use>
+          </svg>
+        </button>
+      </li>
+    </ul>
+  </div>
+  <nav aria-label="Fourth navbar example" class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="https://portmaster.games">
+        <img height="35px" src="{{ url_for('static', filename='img/logo.svg') }}" />
+      </a>
+      <button aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation"
+        class="navbar-toggler" data-bs-target="#navbarsExample04" data-bs-toggle="collapse" type="button">
+        <span class="navbar-toggler-icon">
+        </span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarsExample04">
+        <ul class="navbar-nav me-auto mb-2 mb-md-0">
+          <li class="nav-item">
+            <a aria-current="page" class="nav-link active" href="https://discord.gg/JxYBp9HTAY">
+              Discord
+            </a>
+          </li>
+          <li class="nav-item">
+            <a aria-current="page" class="nav-link active" href="https://github.com/PortsMaster">
+              GitHub
+            </a>
+          </li>
+          <li class="nav-item">
+            <a aria-current="page" class="nav-link active" href="https://portmaster.games/faq.html">
+              FAQ
+            </a>
+          </li>
+          <li class="nav-item">
+            <a aria-current="page" class="nav-link active" href="https://opencollective.com/portmaster">
+              <i class="bi bi-bag-heart-fill">
+              </i>
+              Donate
+            </a>
+          </li>
+          <li class="nav-item">
+            <a aria-current="page" class="nav-link active" href="/">
+              Suggestions
+            </a>
+          </li>
+        </ul>
+        <ul class="navbar-nav" style="margin-right: 30px;">
+          {% if admin == True %}
+          <li class="nav-item">
+            <a aria-current="page" class="nav-link active" href="admin">
+             Admin
+            </a>
+           </li>
+           {% endif %}
+           {% if moderator == True or admin == True %}
+           <li class="nav-item">
+             <a aria-current="page" class="nav-link active" href="moderator">
+              Moderator
+             </a>
+            </li>
+            {% endif %}
+          <li class="nav-item">
+            <a aria-current="page" class="nav-link active" href="new-suggestion">
+             Submit Suggestion
+            </a>
+           </li>
+          {% if loggedin == True %}
+          <li class="nav-item">
+            <a aria-current="page" class="nav-link active" href="profile">
+             Profile
+            </a>
+           </li>
+          <li class="nav-item">
+            <a aria-current="page" class="nav-link active" href="logout">
+              Log Out
+            </a>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a aria-current="page" class="nav-link active" href="signup">
+              Sign Up
+            </a>
+          </li>
+          <li class="nav-item">
+            <a aria-current="page" class="nav-link active" href="login">
+              Log In
+            </a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <br />
+  <div class="container">
+    <main>
+      <div class="py-5 text-center">
+        <h2>
+          New Suggestion
+        </h2>
+        <p class="lead">
+          Not all games are possible to port. Please see the <a
+            href="https://portmaster.games/porting.html#restrictions-tools">documentation</a> on restrictions.
+
+          Once submitted, your suggestion will be in pending status and only visible in your profile page until a
+          moderator approves it. Please note, sugestions will be viewed and approved on best effort from the moderation
+          team.
+        </p>
+      </div>
+      <div class="row g-5 justify-content-center">
+        <div class="col-md-7 col-lg-8">
+          <form action="/add-suggestion" method="POST" class="needs-validation" id="form" name="form">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label" for="title">
+                  Title
+                </label>
+                <input onchange='document.getElementById("title-invalid").style.display = "none";' class="form-control" name="title" id="title" placeholder="" type="text" />
+                <div style="display: none;" id="title-invalid" class="invalid-feedback">
+                  </div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="weburl">
+                  Website URL (Github,Steam,Itch.io etc)
+                </label>
+                <input onchange='document.getElementById("website-invalid").style.display = "none";' class="form-control" name="weburl" id="weburl" placeholder="" type="text" />
+                <div style="display: none;" id="website-invalid" class="invalid-feedback">
+                  Please provide a valid url.
+                  </div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="imageurl">
+                  Screenshot URL
+                </label>
+                <input onchange='document.getElementById("image-invalid").style.display = "none";' class="form-control" name="imageurl" id="imageurl" placeholder="" type="text" />
+                <div style="display: none;" id="image-invalid" class="invalid-feedback">
+                  Please provide a valid url.
+                  </div>
+              </div>
+              <div class="col-md-6">
+                <label for="language" class="form-label">Programming Language</label>
+                <select class="form-select" name="language" id="language">
+                  {% for language in suggestion_content["programming_language"] %}
+                  <option value="{{language}}">{{language}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="license" class="form-label">License</label>
+                <select class="form-select" name="license" id="license">
+                  {% for license in suggestion_content["license"] %}
+                  <option value="{{license}}">{{license}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="content" class="form-label">Content</label>
+                <select class="form-select" name="content" id="content">
+                  {% for content in suggestion_content["content"] %}
+                  <option value="{{content}}">{{content}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="engine" class="form-label">Engine</label>
+                <select onchange="engineChange()" class="form-select" name="engine" id="engine">
+                  {% for engine in suggestion_content["engine"] %}
+                  <option value="{{engine}}">{{engine}}</option>
+                  {% endfor %}
+                </select>
+                <div style="display: none;" id="engine-invalid" class="invalid-feedback">
+                  </div>
+              </div>
+              <div class="col-md-6">
+                <label for="dependencies" class="form-label">Category</label>
+                <select class="form-select" name="category" id="category">
+                  {% for category in suggestion_content["category"] %}
+                  <option value="{{category}}">{{category}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="dependencies" class="form-label">Dependencies</label>
+                <select multiple class="form-select" name="dependencies" id="dependencies">
+                  {% for dependency in suggestion_content["dependency"] %}
+                  <option value="{{dependency}}">{{dependency}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="comment">
+                  Comment (details like limitations etc)
+                </label>
+                <textarea class="form-control" id="comment" name="comment" rows="3"></textarea>
+              </div>
+              <div style="text-align: center" class="col-12">
+                <button class="btn btn-primary" style="margin-right: 20px;" name="action" value="update" id="submit"
+                  name="submit" type="submit">Submit</button>
+                <a class="btn btn-danger" href="/" name="" value="" type="button">Cancel</a>
+              </div>
+          </form>
+        </div>
+      </div>
+
+  </div>
+  <br>
+  <br>
+
+<div class="modal fade" id="popup" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">Suggestion Requirements</h1>
+      </div>
+      <div class="modal-body">
+        <p> Before making a suggestion make sure it is possible or has a chance to be ported.</p>
+
+<p> For this you need to make sure it meets certain requirements.
+We created this handy chart which you need to follow and post the result in the comment section.
+
+<a target="_blank" rel="noopener noreferrer" href="https://raw.githubusercontent.com/PortsMaster/Port-Bot/main/Portmaster_chart.webp">Link to Port Chart</a></p>
+
+<p> If the game is a GameMaker game we need to know the exact game version and if its YYC or not.
+<a target="_blank" rel="noopener noreferrer" href="https://portmaster.games/porting.html#gms">You can check via this guide.</a></p>
+
+       <p> If your submission does not meet the requirements, it will be rejected. If you continue to ignore the requirements, you will no longer be able to submit requests.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Understood</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="gmpopup" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">GameMaker Details</h1>
+      </div>
+      <div class="modal-body">
+        <p> For GameMaker games, add the GameMaker Studio version and if its YYC or not to the comment field.
+          <a target="_blank" rel="noopener noreferrer" href="https://portmaster.games/porting.html#gms">You can check via this guide.</a></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Understood</button>
+      </div>
+    </div>
+  </div>
+</div>
+  </main>
+  <footer class="my-5 pt-5 text-body-secondary text-center text-small">
+  </footer>
+  </div>
+  <script>
+ 
+      $(window).on('load', function() {
+        $('#popup').modal('show');
+    });
+    
+
+    
+    var suggestions = {{ suggestions | tojson }};
+    var unsupported_engines = {{ suggestion_content["unsupported_engine"] | tojson }};
+
+    document.getElementById('form').onsubmit = function () {
+
+      var engine = checkEngine();
+      var title = checkTitle(); 
+      var website = checkWebsiteURL(); 
+      var image = checkImageURL(); 
+      return (engine && title && website && website);
+     
+    }
+
+    function engineChange(){
+      var engine = document.getElementById('engine').value;      
+      document.getElementById("engine-invalid").style.display = "none";
+      if (engine == "Game Maker" || engine == "GameMaker Studio" || engine == "GameMaker Studio 2" ) {
+        $('#gmpopup').modal('show');
+      }
+    }
+
+    function checkEngine(){
+      var engine = document.getElementById('engine').value;
+      if (unsupported_engines.includes(engine)) {
+        document.getElementById('engine-invalid').textContent = "PortMaster does not support " + engine + " at this time."
+        document.getElementById('engine-invalid').style.display = "block";
+        return false;
+      }
+      return true;
+    }
+
+    function checkWebsiteURL(){
+      var weburl = document.getElementById('weburl').value;
+      if (!weburl.includes("http")) {
+        document.getElementById('website-invalid').style.display = "block";
+        return false;
+      }
+      return true;
+    }
+
+    function checkImageURL(){
+      var weburl = document.getElementById('imageurl').value;
+      if (!weburl.includes("http")) {
+        document.getElementById('image-invalid').style.display = "block";
+        return false;
+      }
+      return true;
+    }
+
+    function checkTitle() {
+      var title = document.getElementById('title').value;
+      for (var key of Object.keys(suggestions)) {
+        if (suggestions[key]["title"].trim().toLowerCase() == title.trim().toLowerCase()) {
+          document.getElementById('title-invalid').textContent = "This suggestion title already exists."
+          document.getElementById('title-invalid').style.display = "block";
+          return false;
+        }
+        if (title.trim() == "") {
+          document.getElementById('title-invalid').textContent = "Title is required."
+          document.getElementById('title-invalid').style.display = "block";
+          return false;
+        }
+      }
+      return true
+    }
+
+  </script>
+</body>
+
+</html>

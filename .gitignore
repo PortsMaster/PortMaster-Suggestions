@@ -1,0 +1,15 @@
+## venv, settings, cache, etc
+venv
+.config
+*.pyc
+.ini
+dev
+.db
+
+## IDE and editors
+.idea
+.code
+
+
+.DS_Store
+
