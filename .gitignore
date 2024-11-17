@@ -2,14 +2,14 @@
 venv
 .config
 *.pyc
-.ini
+*.ini
 dev
-.db
+*.db
 
 ## IDE and editors
 .idea
 .code
+.vscode
 
-
+## System files
 .DS_Store
-
