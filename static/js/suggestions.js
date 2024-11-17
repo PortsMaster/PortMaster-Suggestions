@@ -117,7 +117,7 @@ function truncateUrl(str = '', len = 20, clamp = '...') {
         const url = new URL(str);
 
         url.host = truncateCenter(url.pathname, len, clamp);
-        url.pathname = truncateCenter(url.pathname, len, clamp);
+        url.pathname = truncateCenter(url.pathname.replace(/(\/index)?\.(htm|html|php)$/, ''), len, clamp);
         url.search = '';
         url.hash = '';
 
@@ -437,6 +437,8 @@ function getFilteredData(ports, filterState) {
 function createCard(port) {
     const UNKNOWN = 'Other/Unknown';
 
+    const canUpvotePort = loggedin;
+    const canEditPort = port.userid === userid || canEdit;
     const detailsUrl = getDetailsUrl(port);
     const editUrl = getEditUrl(port);
     const imageUrl = getImageUrl(port);
@@ -464,20 +466,19 @@ function createCard(port) {
         port.content !== UNKNOWN && createElement('span', { className: 'badge bg-secondary', title: 'Content' }, port.content),
     ];
 
-    const votesCount = document.createTextNode(port.voteCount);
+    const votesCount = createElement('span', { className: 'me-2' }, `${port.voteCount}`);
     const upvoteIcon = createElement('i', { className: port.voted ? 'bi bi-hand-thumbs-up-fill' : 'bi bi-hand-thumbs-up' });
 
     const upvoteButton = createElement('button', {
         type: 'button',
         className: 'btn btn-sm btn-outline-primary',
         onclick: handleUpvote,
-    }, upvoteIcon);
+    }, [votesCount, upvoteIcon]);
 
     const editButton = createElement('a', { href: editUrl }, [
         createElement('button', {
             type: 'button',
             className: 'btn btn-sm btn-outline-primary',
-            style: 'margin-left: 10px',
         }, 'Edit'),
     ]);
 
@@ -499,11 +500,15 @@ function createCard(port) {
                 }),
             ]),
             createElement('div', { className: 'card-body d-flex flex-column' }, [
-                createElement('h5', { className: 'card-title' }, [
-                    createElement('a', {
-                        href: detailsUrl,
-                        className: 'text-decoration-none link-body-emphasis'
-                    }, port.title),
+                createElement('div', { className: 'd-flex gap-2' }, [
+                    createElement('h5', { className: 'card-title me-auto' }, [
+                        createElement('a', {
+                            href: detailsUrl,
+                            className: 'text-decoration-none link-body-emphasis'
+                        }, port.title),
+                    ]),
+                    canEditPort && editButton,
+                    canUpvotePort && upvoteButton,
                 ]),
                 createElement('p', null, [
                     createElement('a', { href: port.weburl }, truncateUrl(port.weburl)),
@@ -513,18 +518,11 @@ function createCard(port) {
                 }, truncate(port.comment, 220)),
                 createElement('div', { className: 'mt-3 d-flex gap-2 justify-content-between align-items-start' }, [
                     createElement('div', { className: 'd-flex flex-wrap gap-2' }, badges),
-                    loggedin && upvoteButton,
-                    (port.userid === userid || canEdit) && editButton,
                     createElement('a', { href: detailsUrl, className: 'update-anchor' }, 'Details'),
                 ]),
             ]),
             createElement('div', { className: 'card-footer d-flex flex-wrap gap-2' }, [
-                createElement('div', { className: 'flex-fill w-50' }, [
-                    createElement('div', null, [
-                        createElement('span', { className: 'text-muted' }, 'Votes: '),
-                        votesCount,
-                    ]),
-                ]),
+                createElement('div', { className: 'flex-fill w-50' }, []),
                 createElement('div', { className: 'text-end' }, [
                     createElement('div', null, [
                         createElement('span', { className: 'text-muted' }, 'Added: '),
