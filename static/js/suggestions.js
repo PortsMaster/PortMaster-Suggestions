@@ -94,6 +94,38 @@ function uniqValuesCount(key, array) {
         count,
     })).sort((a, b) => a.value.localeCompare(b.value));
 }
+
+function truncate(str = '', len = 20, clamp = '...') {
+    if (str.length > len + clamp.length) {
+        const sliced = str.slice(0, len);
+        const index = sliced.lastIndexOf(' ');
+        return (index !== -1 ? sliced.slice(0, index) : sliced) + clamp;
+    }
+
+    return str;
+}
+
+function truncateCenter(str = '', len = 20, clamp = '...') {
+    if (str.length > len + clamp.length)
+        return str.slice(0, Math.ceil(len / 2)) + clamp + str.slice(-Math.floor(len / 2));
+
+    return str;
+}
+
+function truncateUrl(str = '', len = 20, clamp = '...') {
+    try {
+        const url = new URL(str);
+
+        url.host = truncateCenter(url.pathname, len, clamp);
+        url.pathname = truncateCenter(url.pathname, len, clamp);
+        url.search = '';
+        url.hash = '';
+
+        return url.toString().replace(/^\w+:\/\/(www\.)?/, '').replace(/[/?#]$/, '');
+    } catch (e) {
+        return str;
+    }
+}
 //#endregion
 
 //#region Fetch and process data
@@ -309,9 +341,6 @@ function createDropdowns({ values, onchange }) {
     });
 
     const dropdownGroups = [
-        createDropdownGroup('Status', statusItems),
-        createDropdownGroup('Feasibility', feasibilityItems),
-        createDropdownGroup('Engine', engineItems),
         createDropdownGroup('Filters', [
             createDropdownHeader('Category'),
             ...categoryItems,
@@ -322,6 +351,9 @@ function createDropdowns({ values, onchange }) {
             createDropdownHeader('Language'),
             ...languageItems,
         ]),
+        createDropdownGroup('Status', statusItems),
+        createDropdownGroup('Feasibility', feasibilityItems),
+        createDropdownGroup('Engine', engineItems),
     ];
 
     const dropdownButtons = createElement('div', { className: 'btn-group flex-wrap' }, dropdownGroups);
@@ -403,6 +435,8 @@ function getFilteredData(ports, filterState) {
 
 //#region Create and update cards
 function createCard(port) {
+    const UNKNOWN = 'Other/Unknown';
+
     const detailsUrl = getDetailsUrl(port);
     const editUrl = getEditUrl(port);
     const imageUrl = getImageUrl(port);
@@ -419,8 +453,33 @@ function createCard(port) {
         High: 'bg-success',
     };
 
+    const badges = [
+        createElement('span', { className: `badge ${statusClass[port.status] ?? 'bg-secondary'}`, title: 'Status' }, port.status),
+        createElement('span', { className: `badge ${feasibilityClass[port.feasibility] ?? 'bg-secondary'}`, title: 'Feasibility' }, port.feasibility),
+        createElement('span', { className: 'badge bg-secondary', title: 'Category' }, port.category),
+        port.engine !== UNKNOWN && createElement('span', { className: 'badge bg-secondary', title: 'Engine' }, port.engine),
+        port.language !== UNKNOWN && createElement('span', { className: 'badge bg-secondary', title: 'Language' }, port.language),
+        ...port.dependencies.split(',').map(dependency => dependency !== UNKNOWN && createElement('span', { className: 'badge bg-secondary', title: 'Dependency' }, dependency)),
+        port.license !== UNKNOWN && createElement('span', { className: 'badge bg-secondary', title: 'License' }, port.license),
+        port.content !== UNKNOWN && createElement('span', { className: 'badge bg-secondary', title: 'Content' }, port.content),
+    ];
+
     const votesCount = document.createTextNode(port.voteCount);
     const upvoteIcon = createElement('i', { className: port.voted ? 'bi bi-hand-thumbs-up-fill' : 'bi bi-hand-thumbs-up' });
+
+    const upvoteButton = createElement('button', {
+        type: 'button',
+        className: 'btn btn-sm btn-outline-primary',
+        onclick: handleUpvote,
+    }, upvoteIcon);
+
+    const editButton = createElement('a', { href: editUrl }, [
+        createElement('button', {
+            type: 'button',
+            className: 'btn btn-sm btn-outline-primary',
+            style: 'margin-left: 10px',
+        }, 'Edit'),
+    ]);
 
     function handleUpvote() {
         upvote(port.id, userid).then((data) => {
@@ -432,74 +491,44 @@ function createCard(port) {
 
     return createElement('div', { className: 'col' }, [
         createElement('div', { className: 'card h-100 shadow-sm' }, [
-            createElement('div', { className: 'card-body' }, [
+            createElement('a', { href: detailsUrl, className: 'ratio ratio-4x3 update-anchor' }, [
                 createElement('img', {
-                    className: 'bd-placeholder-img card-img-top',
-                    loading: 'lazy',
                     src: imageUrl,
+                    className: 'bd-black card-img-top object-fit-contain',
+                    loading: 'lazy',
                 }),
-                createElement('h5', {
-                    className: 'card-title',
-                    style: 'padding-top: 20px',
-                }, [
-                    createElement('span', { style: 'margin-right: 20px' }, port.title),
-                    createElement('span', { className: 'badge bg-secondary' }, port.category),
-                    ' ',
-                    createElement('span', { className: `badge ${feasibilityClass[port.feasibility] ?? 'bg-secondary'}` }, `${port.feasibility} Feas.`),
-                    ' ',
-                    createElement('span', { className: `badge ${statusClass[port.status] ?? 'bg-secondary'}` }, port.status),
+            ]),
+            createElement('div', { className: 'card-body d-flex flex-column' }, [
+                createElement('h5', { className: 'card-title' }, [
+                    createElement('a', {
+                        href: detailsUrl,
+                        className: 'text-decoration-none link-body-emphasis'
+                    }, port.title),
                 ]),
-                createElement('h6', { className: 'card-text pt-1' }, [
-                    createElement('span', null, 'Website: '),
-                    createElement('a', { href: port.weburl }, 'Link'),
+                createElement('p', null, [
+                    createElement('a', { href: port.weburl }, truncateUrl(port.weburl)),
                 ]),
-                createElement('h6', { className: 'card-text pt-1' }, [
-                    createElement('span', null, 'Programming Language: '),
-                    createElement('span', { className: 'badge bg-secondary' }, port.language),
+                createElement('div', {
+                    className: 'card-text mb-auto',
+                }, truncate(port.comment, 220)),
+                createElement('div', { className: 'mt-3 d-flex gap-2 justify-content-between align-items-start' }, [
+                    createElement('div', { className: 'd-flex flex-wrap gap-2' }, badges),
+                    loggedin && upvoteButton,
+                    (port.userid === userid || canEdit) && editButton,
+                    createElement('a', { href: detailsUrl, className: 'update-anchor' }, 'Details'),
                 ]),
-                createElement('h6', { className: 'card-text pt-1' }, [
-                    createElement('span', null, 'License: '),
-                    createElement('span', { className: 'badge bg-secondary' }, port.license),
+            ]),
+            createElement('div', { className: 'card-footer d-flex flex-wrap gap-2' }, [
+                createElement('div', { className: 'flex-fill w-50' }, [
+                    createElement('div', null, [
+                        createElement('span', { className: 'text-muted' }, 'Votes: '),
+                        votesCount,
+                    ]),
                 ]),
-                createElement('h6', { className: 'card-text pt-1' }, [
-                    createElement('span', null, 'Content: '),
-                    createElement('span', { className: 'badge bg-secondary' }, port.content),
-                ]),
-                createElement('h6', { className: 'card-text pt-1' }, [
-                    createElement('span', null, 'Engine: '),
-                    createElement('span', { className: 'badge bg-secondary' }, port.engine),
-                ]),
-                createElement('h6', { className: 'card-text pt-1' }, [
-                    createElement('span', null, 'Category: '),
-                    createElement('span', { className: 'badge bg-secondary' }, port.category),
-                ]),
-                createElement('h6', { className: 'card-text pt-1' }, [
-                    createElement('span', null, 'Dependencies: '),
-                    ...port.dependencies.split(',').map(dependency => createElement('span', { className: 'badge bg-secondary me-1' }, dependency)),
-                ]),
-                createElement('p', { className: 'card-text' }, `Added: ${port.date}`),
-                createElement('div', { className: 'd-flex justify-content-between align-items-center' }, [
-                    createElement('small', { className: 'text-body-secondary' }, ['Votes: ', votesCount]),
-                    createElement('div', { className: 'btn-toolbar' }, [
-                        loggedin && createElement('button', {
-                            type: 'button',
-                            className: 'btn btn-sm btn-outline-primary',
-                            onclick: handleUpvote,
-                        }, upvoteIcon),
-                        createElement('a', { href: detailsUrl }, [
-                            createElement('button', {
-                                type: 'button',
-                                className: 'btn btn-sm btn-outline-primary',
-                                style: 'margin-left: 10px',
-                            }, 'Details'),
-                        ]),
-                        (port.userid === userid || canEdit) && createElement('a', { href: editUrl }, [
-                            createElement('button', {
-                                type: 'button',
-                                className: 'btn btn-sm btn-outline-primary',
-                                style: 'margin-left: 10px',
-                            }, 'Edit'),
-                        ]),
+                createElement('div', { className: 'text-end' }, [
+                    createElement('div', null, [
+                        createElement('span', { className: 'text-muted' }, 'Added: '),
+                        `${port.date}`,
                     ]),
                 ]),
             ]),
