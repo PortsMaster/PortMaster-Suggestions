@@ -368,20 +368,20 @@ function createDropdowns({ values, onchange }) {
 
     const dropdownGroups = [
         createDropdownGroup('Filters', [
+            createDropdownHeader('Status'),
+            ...statusItems,
+            createDropdownHeader('Feasibility'),
+            ...feasibilityItems,
             createDropdownHeader('Category'),
             ...categoryItems,
             createDropdownHeader('Content'),
             ...contentItems,
             createDropdownHeader('License'),
             ...licenseItems,
-            createDropdownHeader('Language'),
-            ...languageItems,
-            createDropdownHeader('Dependency'),
-            ...dependencyItems,
         ]),
-        createDropdownGroup('Status', statusItems),
-        createDropdownGroup('Feasibility', feasibilityItems),
         createDropdownGroup('Engine', engineItems),
+        createDropdownGroup('Lang', languageItems),
+        createDropdownGroup('Dependency', dependencyItems),
     ];
 
     const dropdownButtons = createElement('div', { className: 'btn-group flex-wrap' }, dropdownGroups);
@@ -510,11 +510,11 @@ function createCard(port) {
         createElement('span', { className: `badge ${statusClass[port.status] ?? 'bg-secondary'}`, title: 'Status' }, port.status),
         createElement('span', { className: `badge ${feasibilityClass[port.feasibility] ?? 'bg-secondary'}`, title: 'Feasibility' }, port.feasibility),
         createElement('span', { className: 'badge bg-secondary', title: 'Category' }, port.category),
+        port.license !== UNKNOWN && createElement('span', { className: 'badge bg-secondary', title: 'License' }, port.license),
+        port.content !== UNKNOWN && createElement('span', { className: 'badge bg-secondary', title: 'Content' }, port.content),
         port.engine !== UNKNOWN && createElement('span', { className: 'badge bg-secondary', title: 'Engine' }, port.engine),
         port.language !== UNKNOWN && createElement('span', { className: 'badge bg-secondary', title: 'Language' }, port.language),
         ...port.dependencies.split(',').map(dependency => dependency !== UNKNOWN && createElement('span', { className: 'badge bg-secondary', title: 'Dependency' }, dependency)),
-        port.license !== UNKNOWN && createElement('span', { className: 'badge bg-secondary', title: 'License' }, port.license),
-        port.content !== UNKNOWN && createElement('span', { className: 'badge bg-secondary', title: 'Content' }, port.content),
     ];
 
     const votesCount = createElement('span', { className: 'me-2' }, `${port.voteCount}`);
