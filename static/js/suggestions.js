@@ -6,10 +6,13 @@ window.addEventListener('DOMContentLoaded', async function() {
     const values = getSuggestionValues(ports);
 
     const { containerElement, filterControls, updateDropdowns, updateCards } = createContainer({ values, onchange });
+    const filterState = JSON.parse(sessionStorage.getItem('filterState'));
+    setFilterState(filterControls, filterState);
     appElement.replaceChildren(containerElement);
 
     function onchange() {
         const filterState = getFilterState(filterControls);
+        sessionStorage.setItem('filterState', JSON.stringify(filterState));
         updateDropdowns();
         updateCards(getFilteredData(ports, filterState).map(getCard));
     }
@@ -411,6 +414,22 @@ function getFilterState({ searchInput, sortRadio, checkboxes }) {
             language: getCheckedValues(checkboxes.language),
             dependency: getCheckedValues(checkboxes.dependency),
         },
+    }
+}
+
+function setFilterState({ searchInput, sortRadio, checkboxes }, filterState) {
+    if (!filterState) return;
+
+    searchInput.value = filterState.search;
+
+    for (const [value, element] of Object.entries(sortRadio)) {
+        element.checked = filterState.sort[value] ?? false;
+    }
+
+    for (const [name, items] of Object.entries(checkboxes)) {
+        for (const [value, element] of Object.entries(items)) {
+            element.checked = filterState.values[name]?.[value] ?? false;
+        }
     }
 }
 
