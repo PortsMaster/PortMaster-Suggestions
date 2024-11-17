@@ -158,6 +158,23 @@ async function upvote(suggestionid, userid) {
     return response.json(); // parses JSON response into native JavaScript objects
 }
 
+function getDependencyValuesCount(ports) {
+    const values = {};
+
+    for (const port of ports) {
+        if (port.dependencies) {
+            for (const value of port.dependencies.split(',')) {
+                values[value] = values[value] ? values[value] + 1 : 1;
+            }
+        }
+    }
+
+    return Object.entries(values).map(([value, count]) => ({
+        value,
+        count,
+    })).sort((a, b) => a.value.localeCompare(b.value));
+}
+
 function getSuggestionValues(ports) {
     return {
         status: uniqValuesCount('status', ports),
@@ -167,6 +184,7 @@ function getSuggestionValues(ports) {
         engine: uniqValuesCount('engine', ports),
         language: uniqValuesCount('language', ports),
         license: uniqValuesCount('license', ports),
+        dependency: getDependencyValuesCount(ports),
     };
 }
 
@@ -304,6 +322,7 @@ function createDropdowns({ values, onchange }) {
         content: {},
         license: {},
         language: {},
+        dependency: {},
     };
 
     const statusCounts = Object.fromEntries(values.status.map(({ value, count }) => [value, count]));
@@ -340,6 +359,10 @@ function createDropdowns({ values, onchange }) {
         return createDropdownItem(checkboxes.language[value] = createDropdownCheckbox(value, onchange), value, count);
     });
 
+    const dependencyItems = values.dependency.map(({ value, count }) => {
+        return createDropdownItem(checkboxes.dependency[value] = createDropdownCheckbox(value, onchange), value, count);
+    });
+
     const dropdownGroups = [
         createDropdownGroup('Filters', [
             createDropdownHeader('Category'),
@@ -350,6 +373,8 @@ function createDropdowns({ values, onchange }) {
             ...licenseItems,
             createDropdownHeader('Language'),
             ...languageItems,
+            createDropdownHeader('Dependency'),
+            ...dependencyItems,
         ]),
         createDropdownGroup('Status', statusItems),
         createDropdownGroup('Feasibility', feasibilityItems),
@@ -384,6 +409,7 @@ function getFilterState({ searchInput, sortRadio, checkboxes }) {
             content: getCheckedValues(checkboxes.content),
             license: getCheckedValues(checkboxes.license),
             language: getCheckedValues(checkboxes.language),
+            dependency: getCheckedValues(checkboxes.dependency),
         },
     }
 }
@@ -397,8 +423,14 @@ function getFilteredData(ports, filterState) {
 
     function matchFilter(port) {
         for (const name of filterValues) {
-            if (!filterState.values[name][port[name]]) {
-                return false;
+            if (name === 'dependency') {
+                if (!port.dependencies.split(',').some(dependency => filterState.values.dependency[dependency])) {
+                    return false;
+                }
+            } else {
+                if (!filterState.values[name][port[name]]) {
+                    return false;
+                }
             }
         }
 
