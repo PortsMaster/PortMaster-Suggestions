@@ -127,7 +127,7 @@
    <link href="{{ url_for('static', filename='css/navbars.css') }}" rel="stylesheet"/>
   </link>
  </head>
- <body>
+ <body class="bg-body-tertiary">
   <svg class="d-none" xmlns="http://www.w3.org/2000/svg">
    <symbol id="check2" viewbox="0 0 16 16">
     <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z">
@@ -235,7 +235,7 @@
         </a>
        </li>
       </ul>
-      <ul class="navbar-nav" style="margin-right: 30px;">
+      <ul class="navbar-nav">
         {% if admin == True %}
         <li class="nav-item">
           <a aria-current="page" class="nav-link active" href="admin">
@@ -279,110 +279,13 @@
            </li>
            {% endif %}
       </ul>
-      <ul class="navbar-nav">
-        <li class="nav-item dropdown">
-          <a aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">
-           Filters
-          </a>
-          <ul class="dropdown-menu">
-            <li><h6 class="dropdown-header">Status</h6></li>
-            <div class="dropdown-item">
-              <li>
-               <label>
-                <input checked="true" class="form-check-input" id="open" onchange="fetchDataAndDisplayCards()" type="checkbox" value=""/>
-                Open
-               </label>
-              </li>
-             </div>
-             <div class="dropdown-item">
-              <li>
-               <label>
-                <input class="form-check-input" id="completed" onchange="fetchDataAndDisplayCards()" type="checkbox" value=""/>
-                Completed
-               </label>
-              </li>
-             </div>
-             <div class="dropdown-item">
-              <li>
-              <label>
-               <input class="form-check-input" id="rejected" onchange="fetchDataAndDisplayCards()" type="checkbox" value=""/>
-               Rejected
-              </label>
-             </li>
-             </div>
-             <li><h6 class="dropdown-header">Feasibility</h6></li>
-             <div class="dropdown-item">
-              <li>
-              <label>
-                <input checked="true" class="form-check-input" id="highfeas" onchange="fetchDataAndDisplayCards()" type="checkbox" value=""/>
-                High Feasibility
-               </label>
-              </li>
-              </div>
-              <div class="dropdown-item">
-                <li>
-                  <label>
-                    <input checked="true" class="form-check-input" id="medfeas" onchange="fetchDataAndDisplayCards()" type="checkbox" value=""/>
-                    Medium Feasibility
-                   </label>
-                  </li>
-                </div>
-                <div class="dropdown-item">
-                  <li>
-                    <label>
-                      <input checked="true" class="form-check-input" id="lowfeas" onchange="fetchDataAndDisplayCards()" type="checkbox" value=""/>
-                      Low Feasibility
-                     </label>
-                    </li>
-                </div>
-           </ul>
-         </li>
-         <li style="margin-right: 10px;" class="nav-item dropdown">
-          <a aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">
-           Sort
-          </a>
-          <ul class="dropdown-menu">
-           <div class="dropdown-item">
-            <li>
-             <label>
-              <input  class="form-check-input" id="sortAZ" name="sortRadio" onchange="fetchDataAndDisplayCards()" type="radio" value=""/>
-              A - Z
-             </label>
-            </li>
-           </div>
-           <div class="dropdown-item">
-            <li>
-             <label>
-              <input class="form-check-input" id="sortVoted" name="sortRadio" onchange="fetchDataAndDisplayCards()" type="radio" value=""/>
-              Most Voted
-             </label>
-            </li>
-           </div>
-           <div class="dropdown-item">
-            <li>
-             <label>
-              <input checked="true" class="form-check-input" name="sortRadio" id="sortNewest" onchange="fetchDataAndDisplayCards()" type="radio" value=""/>
-              Most Recent
-             </label>
-            </li>
-           </div>
-           </ul>
-         </li>
-      </ul>
-      <form  onkeydown="return event.key != 'Enter';" role="search">
-        <input aria-label="Search" class="form-control" id="search" oninput="fetchDataAndDisplayCards()" placeholder="Search" type="search"/>
-       </form>
      </div>
     </div>
    </nav>
    <br/>
-   <br/>
    <main>
-    <div class="album py-5 bg-body-tertiary">
-     <div class="container">
-      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3" id="cards-container">
-      </div>
-     </div>
+    <div class="album py-5">
+     <div id="app"></div>
     </div>
    </main>
   </main>
