@@ -2,10 +2,11 @@ window.addEventListener('DOMContentLoaded', async function() {
     const appElement = document.getElementById('app');
     appElement.replaceChildren(createContainerLoading());
 
-    const ports = await fetchSuggestions();
-    const values = getSuggestionValues(ports);
+    const ports = await fetchPorts();
+    const suggestions = await fetchSuggestions();
+    const values = getSuggestionValues(suggestions);
 
-    const { containerElement, filterControls, updateDropdowns, updateCards } = createContainer({ values, onchange });
+    const { containerElement, updateContainer, filterControls } = createContainer({ values, onchange });
     const filterState = JSON.parse(sessionStorage.getItem('filterState'));
     setFilterState(filterControls, filterState);
     appElement.replaceChildren(containerElement);
@@ -13,8 +14,10 @@ window.addEventListener('DOMContentLoaded', async function() {
     function onchange() {
         const filterState = getFilterState(filterControls);
         sessionStorage.setItem('filterState', JSON.stringify(filterState));
-        updateDropdowns();
-        updateCards(getFilteredData(ports, filterState).map(getCard));
+        updateContainer({
+            ports: createPorts(getFilteredPorts(ports, filterState), filterState.search),
+            cards: getFilteredSuggestions(suggestions, filterState).map(getCard),
+        });
     }
     onchange();
 });
@@ -26,6 +29,20 @@ async function fetchJson(url) {
         throw new Error("Network response was not ok.");
     }
     return portsResponse.json();
+}
+
+function createFragment(children) {
+    const fragment = document.createDocumentFragment();
+
+    if (children) {
+        if (Array.isArray(children)) {
+            fragment.append(...children.filter(Boolean));
+        } else {
+            fragment.append(children);
+        }
+    }
+
+    return fragment;
 }
 
 function createElement(tagName, props, children) {
@@ -132,12 +149,31 @@ function truncateUrl(str = '', len = 20, clamp = '...') {
 //#endregion
 
 //#region Fetch and process data
+async function fetchPorts() {
+    try {
+        const portsData = await fetchJson('https://raw.githubusercontent.com/PortsMaster/PortMaster-Info/main/ports.json'); // Replace 'YOUR_JSON_URL_HERE' with the actual URL of your JSON data.
+        return Object.values(portsData.ports);
+    } catch (error) {
+        console.error('Error fetching JSON data:', error);
+        return [];
+    }
+}
+
+function getPortSearchUrl(search) {
+    return `https://portmaster.games/games.html?search=${encodeURIComponent(search)}`;
+}
+
+function getPortUrl(port) {
+    return `https://portmaster.games/detail.html?name=${encodeURIComponent(port.name.replace('.zip', ''))}`;
+}
+
 async function fetchSuggestions() {
     try {
         const suggestions = await fetchJson('/api/suggestions_new'); // Replace 'YOUR_JSON_URL_HERE' with the actual URL of your JSON data.
         return suggestions.filter(suggestion => suggestion.status !== 'Pending');
     } catch (error) {
         console.error('Error fetching JSON data:', error);
+        return [];
     }
 }
 
@@ -240,6 +276,23 @@ function createSort({ onchange }) {
     return { sortElement, sortRadio }
 }
 
+function createPorts(ports, search) {
+    if (ports.length === 0) return null;
+
+    const items = ports.slice(0, 3).map(port => {
+        return createElement('li', null, createElement('a', { href: getPortUrl(port) }, port.attr.title));
+    });
+
+    if (ports.length > 3) {
+        items.push(createElement('li', null, createElement('a', { href: getPortSearchUrl(search) }, `And ${ports.length - 3} more`)));
+    }
+
+    return createFragment([
+        createElement('h6', null, `Already ported ${ports.length}`),
+        createElement('ul', null, items),
+    ]);
+}
+
 function createContainerLoading() {
     return createElement('div', { className: 'container' }, [
         createElement('h2', { className: 'my-2 text-center text-muted' }, [
@@ -259,20 +312,25 @@ function createContainer({ values, onchange }) {
     const containerRefs = {};
     const containerElement = createElement('div', { className: 'container' }, [
         createElement('div', { className: 'my-2 gap-2 d-flex flex-wrap justify-content-center' }, [dropdownButtons, searchInput, sortElement]),
+        createElement('div', { ref: el => containerRefs.ports = el, hidden: true }),
         createElement('h2', { ref: el => containerRefs.title = el, className: 'my-4 text-center' }),
         createElement('div', { ref: el => containerRefs.list = el, className: 'row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3' }),
     ]);
 
-    function updateCards(cards) {
+    function updateContainer({ ports, cards }) {
+        updateDropdowns();
+
+        containerRefs.ports.replaceChildren(ports);
+        containerRefs.ports.hidden = !ports;
+
         containerRefs.title.textContent = `${cards.length} Suggestions`;
         batchReplaceChildren(200, containerRefs.list, cards);
     }
 
     return {
         containerElement,
+        updateContainer,
         filterControls,
-        updateDropdowns,
-        updateCards,
     };
 }
 //#endregion
@@ -437,7 +495,21 @@ function getFilterValues(filterState) {
     return Object.entries(filterState.values).filter(([_, items]) => Object.values(items).some(Boolean)).map(([name]) => name);
 }
 
-function getFilteredData(ports, filterState) {
+function getFilteredPorts(ports, filterState) {
+    if (filterState.search) {
+        const fuse = new Fuse(ports, {
+            threshold: 0.2,
+            ignoreLocation: true,
+            keys: ['attr.title'],
+        });
+        const results = fuse.search(filterState.search);
+        return results.map(result => result.item);
+    } else {
+        return [];
+    }
+}
+
+function getFilteredSuggestions(ports, filterState) {
     const filterValues = getFilterValues(filterState);
 
     function matchFilter(port) {
