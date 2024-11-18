@@ -522,7 +522,7 @@ function createCard(port) {
 
     const upvoteButton = createElement('button', {
         type: 'button',
-        className: 'btn btn-sm btn-outline-primary',
+        className: 'btn btn-sm btn-outline-primary text-nowrap',
         onclick: handleUpvote,
     }, [votesCount, upvoteIcon]);
 
@@ -551,7 +551,7 @@ function createCard(port) {
                 }),
             ]),
             createElement('div', { className: 'card-body d-flex flex-column' }, [
-                createElement('div', { className: 'd-flex gap-2' }, [
+                createElement('div', { className: 'd-flex align-items-start gap-2' }, [
                     createElement('h5', { className: 'card-title me-auto' }, [
                         createElement('a', {
                             href: detailsUrl,
