@@ -1,247 +1,196 @@
 <!DOCTYPE html>
 <html data-bs-theme="auto" lang="en">
-<head>
-  <title>New Suggestion</title>
-  <meta charset="utf-8" />
-  <meta content="width=device-width, initial-scale=1" name="viewport" />
-  <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}" />
+  <head>
+    <title>New Suggestion</title>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}" />
 
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/shared.css') }}" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-docs.css') }}" />
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.css" />
-  
-  <script src="{{ url_for('static', filename='js/color-modes.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-  <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
-</head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/shared.css') }}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-docs.css') }}" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.css" />
 
-<body class="bg-body-tertiary">
-  {% include 'partials/theme_dropdown.html' %}
-  <nav aria-label="Fourth navbar example" class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="https://portmaster.games">
-        <img height="35px" src="{{ url_for('static', filename='img/logo.svg') }}" />
-      </a>
-      <button aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation"
-        class="navbar-toggler" data-bs-target="#navbarsExample04" data-bs-toggle="collapse" type="button">
-        <span class="navbar-toggler-icon">
-        </span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarsExample04">
-        {% include 'partials/main_nav.html' %}
-        <ul class="navbar-nav" style="margin-right: 30px;">
-          {% if admin == True %}
-          <li class="nav-item">
-            <a aria-current="page" class="nav-link active" href="admin">
-             Admin
-            </a>
-           </li>
-           {% endif %}
-           {% if moderator == True or admin == True %}
-           <li class="nav-item">
-             <a aria-current="page" class="nav-link active" href="moderator">
-              Moderator
-             </a>
-            </li>
-            {% endif %}
-          <li class="nav-item">
-            <a aria-current="page" class="nav-link active" href="new-suggestion">
-             Submit Suggestion
-            </a>
-           </li>
-          {% if loggedin == True %}
-          <li class="nav-item">
-            <a aria-current="page" class="nav-link active" href="profile">
-             Profile
-            </a>
-           </li>
-          <li class="nav-item">
-            <a aria-current="page" class="nav-link active" href="logout">
-              Log Out
-            </a>
-          </li>
-          {% else %}
-          <li class="nav-item">
-            <a aria-current="page" class="nav-link active" href="signup">
-              Sign Up
-            </a>
-          </li>
-          <li class="nav-item">
-            <a aria-current="page" class="nav-link active" href="login">
-              Log In
-            </a>
-          </li>
-          {% endif %}
-        </ul>
-      </div>
-    </div>
-  </nav>
-  <br />
-  <div class="container">
-    <main>
-      <div class="py-5 text-center">
-        <h2>
-          New Suggestion
-        </h2>
-        <p class="lead">
-          Not all games are possible to port. Please see the <a
-            href="https://portmaster.games/porting.html#restrictions-tools">documentation</a> on restrictions.
-
-          Once submitted, your suggestion will be in pending status and only visible in your profile page until a
-          moderator approves it. Please note, sugestions will be viewed and approved on best effort from the moderation
-          team.
-        </p>
-      </div>
-      <div class="row g-5 justify-content-center">
-        <div class="col-md-7 col-lg-8">
-          <form action="/add-suggestion" method="POST" class="needs-validation" id="form" name="form">
-            <div class="row g-3">
-              <div class="col-md-6">
-                <label class="form-label" for="title">
-                  Title
-                </label>
-                <input onchange='document.getElementById("title-invalid").style.display = "none";' class="form-control" name="title" id="title" placeholder="" type="text" />
-                <div style="display: none;" id="title-invalid" class="invalid-feedback">
-                  </div>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label" for="weburl">
-                  Website URL (Github,Steam,Itch.io etc)
-                </label>
-                <input onchange='document.getElementById("website-invalid").style.display = "none";' class="form-control" name="weburl" id="weburl" placeholder="" type="text" />
-                <div style="display: none;" id="website-invalid" class="invalid-feedback">
-                  Please provide a valid url.
-                  </div>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label" for="imageurl">
-                  Screenshot URL
-                </label>
-                <input onchange='document.getElementById("image-invalid").style.display = "none";' class="form-control" name="imageurl" id="imageurl" placeholder="" type="text" />
-                <div style="display: none;" id="image-invalid" class="invalid-feedback">
-                  Please provide a valid url.
-                  </div>
-              </div>
-              <div class="col-md-6">
-                <label for="language" class="form-label">Programming Language</label>
-                <select class="form-select" name="language" id="language">
-                  {% for language in suggestion_content["programming_language"] %}
-                  <option value="{{language}}">{{language}}</option>
-                  {% endfor %}
-                </select>
-              </div>
-              <div class="col-md-6">
-                <label for="license" class="form-label">License</label>
-                <select class="form-select" name="license" id="license">
-                  {% for license in suggestion_content["license"] %}
-                  <option value="{{license}}">{{license}}</option>
-                  {% endfor %}
-                </select>
-              </div>
-              <div class="col-md-6">
-                <label for="content" class="form-label">Content</label>
-                <select class="form-select" name="content" id="content">
-                  {% for content in suggestion_content["content"] %}
-                  <option value="{{content}}">{{content}}</option>
-                  {% endfor %}
-                </select>
-              </div>
-              <div class="col-md-6">
-                <label for="engine" class="form-label">Engine</label>
-                <select onchange="engineChange()" class="form-select" name="engine" id="engine">
-                  {% for engine in suggestion_content["engine"] %}
-                  <option value="{{engine}}">{{engine}}</option>
-                  {% endfor %}
-                </select>
-                <div style="display: none;" id="engine-invalid" class="invalid-feedback">
-                  </div>
-              </div>
-              <div class="col-md-6">
-                <label for="dependencies" class="form-label">Category</label>
-                <select class="form-select" name="category" id="category">
-                  {% for category in suggestion_content["category"] %}
-                  <option value="{{category}}">{{category}}</option>
-                  {% endfor %}
-                </select>
-              </div>
-              <div class="col-md-6">
-                <label for="dependencies" class="form-label">Dependencies</label>
-                <select multiple class="form-select" name="dependencies" id="dependencies">
-                  {% for dependency in suggestion_content["dependency"] %}
-                  <option value="{{dependency}}">{{dependency}}</option>
-                  {% endfor %}
-                </select>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label" for="comment">
-                  Comment (details like limitations etc)
-                </label>
-                <textarea class="form-control" id="comment" name="comment" rows="3"></textarea>
-              </div>
-              <div style="text-align: center" class="col-12">
-                <button class="btn btn-primary" style="margin-right: 20px;" name="action" value="update" id="submit"
-                  name="submit" type="submit">Submit</button>
-                <a class="btn btn-danger" href="/" name="" value="" type="button">Cancel</a>
-              </div>
-          </form>
+    <script src="{{ url_for('static', filename='js/color-modes.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+  </head>
+  <body class="bg-body-tertiary">
+    {% include 'partials/theme_dropdown.html' %}
+    {% include 'partials/navbar.html' %}
+    <br />
+    <div class="container">
+      <main>
+        <div class="py-5 text-center">
+          <h2>
+            New Suggestion
+          </h2>
+          <p class="lead">
+            Not all games are possible to port. Please see the <a href="https://portmaster.games/porting.html#restrictions-tools">documentation</a> on restrictions.
+            Once submitted, your suggestion will be in pending status and only visible in your profile page until a
+            moderator approves it. Please note, sugestions will be viewed and approved on best effort from the moderation
+            team.
+          </p>
         </div>
-      </div>
 
-  </div>
-  <br>
-  <br>
+        <div class="row g-5 justify-content-center">
+          <div class="col-md-7 col-lg-8">
+            <form action="/add-suggestion" method="POST" class="needs-validation" id="form" name="form">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label" for="title">
+                    Title
+                  </label>
+                  <input onchange='document.getElementById("title-invalid").style.display = "none";' class="form-control"
+                    name="title" id="title" placeholder="" type="text" />
+                  <div style="display: none;" id="title-invalid" class="invalid-feedback">
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="weburl">
+                    Website URL (Github,Steam,Itch.io etc)
+                  </label>
+                  <input onchange='document.getElementById("website-invalid").style.display = "none";'
+                    class="form-control" name="weburl" id="weburl" placeholder="" type="text" />
+                  <div style="display: none;" id="website-invalid" class="invalid-feedback">
+                    Please provide a valid url.
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="imageurl">
+                    Screenshot URL
+                  </label>
+                  <input onchange='document.getElementById("image-invalid").style.display = "none";' class="form-control"
+                    name="imageurl" id="imageurl" placeholder="" type="text" />
+                  <div style="display: none;" id="image-invalid" class="invalid-feedback">
+                    Please provide a valid url.
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <label for="language" class="form-label">Programming Language</label>
+                  <select class="form-select" name="language" id="language">
+                    {% for language in suggestion_content["programming_language"] %}
+                    <option value="{{language}}">{{language}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label for="license" class="form-label">License</label>
+                  <select class="form-select" name="license" id="license">
+                    {% for license in suggestion_content["license"] %}
+                    <option value="{{license}}">{{license}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label for="content" class="form-label">Content</label>
+                  <select class="form-select" name="content" id="content">
+                    {% for content in suggestion_content["content"] %}
+                    <option value="{{content}}">{{content}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label for="engine" class="form-label">Engine</label>
+                  <select onchange="engineChange()" class="form-select" name="engine" id="engine">
+                    {% for engine in suggestion_content["engine"] %}
+                    <option value="{{engine}}">{{engine}}</option>
+                    {% endfor %}
+                  </select>
+                  <div style="display: none;" id="engine-invalid" class="invalid-feedback">
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <label for="dependencies" class="form-label">Category</label>
+                  <select class="form-select" name="category" id="category">
+                    {% for category in suggestion_content["category"] %}
+                    <option value="{{category}}">{{category}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label for="dependencies" class="form-label">Dependencies</label>
+                  <select multiple class="form-select" name="dependencies" id="dependencies">
+                    {% for dependency in suggestion_content["dependency"] %}
+                    <option value="{{dependency}}">{{dependency}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="comment">
+                    Comment (details like limitations etc)
+                  </label>
+                  <textarea class="form-control" id="comment" name="comment" rows="3"></textarea>
+                </div>
+                <div style="text-align: center" class="col-12">
+                  <button class="btn btn-primary" style="margin-right: 20px;" name="action" value="update" id="submit"
+                    name="submit" type="submit">Submit</button>
+                  <a class="btn btn-danger" href="/" name="" value="" type="button">Cancel</a>
+                </div>
+            </form>
+          </div>
+        </div>
 
-<div class="modal fade" id="popup" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="staticBackdropLabel">Suggestion Requirements</h1>
-      </div>
-      <div class="modal-body">
-        <p> Before making a suggestion make sure it is possible or has a chance to be ported.</p>
+        <div class="modal fade" id="popup" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+          aria-labelledby="staticBackdropLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Suggestion Requirements</h1>
+              </div>
+              <div class="modal-body">
+                <p> Before making a suggestion make sure it is possible or has a chance to be ported.</p>
+                <p> For this you need to make sure it meets certain requirements.
+                  We created this handy chart which you need to follow and post the result in the comment section.
+                  <a target="_blank" rel="noopener noreferrer"
+                    href="https://raw.githubusercontent.com/PortsMaster/Port-Bot/main/Portmaster_chart.webp">Link to Port
+                    Chart</a>
+                </p>
+                <p> If the game is a GameMaker game we need to know the exact game version and if its YYC or not.
+                  <a target="_blank" rel="noopener noreferrer" href="https://portmaster.games/porting.html#gms">You can check
+                    via this guide.</a>
+                </p>
+                <p> If your submission does not meet the requirements, it will be rejected. If you continue to ignore the
+                  requirements, you will no longer be able to submit requests.</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Understood</button>
+              </div>
+            </div>
+          </div>
+        </div>
 
-<p> For this you need to make sure it meets certain requirements.
-We created this handy chart which you need to follow and post the result in the comment section.
+        <div class="modal fade" id="gmpopup" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+          aria-labelledby="staticBackdropLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">GameMaker Details</h1>
+              </div>
+              <div class="modal-body">
+                <p> For GameMaker games, add the GameMaker Studio version and if its YYC or not to the comment field.
+                  <a target="_blank" rel="noopener noreferrer" href="https://portmaster.games/porting.html#gms">You can check
+                    via this guide.</a>
+                </p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Understood</button>
+              </div>
+            </div>
+          </div>
+        </div>
 
-<a target="_blank" rel="noopener noreferrer" href="https://raw.githubusercontent.com/PortsMaster/Port-Bot/main/Portmaster_chart.webp">Link to Port Chart</a></p>
-
-<p> If the game is a GameMaker game we need to know the exact game version and if its YYC or not.
-<a target="_blank" rel="noopener noreferrer" href="https://portmaster.games/porting.html#gms">You can check via this guide.</a></p>
-
-       <p> If your submission does not meet the requirements, it will be rejected. If you continue to ignore the requirements, you will no longer be able to submit requests.</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Understood</button>
-      </div>
+        <br>
+        <br>
+      </main>
     </div>
-  </div>
-</div>
-<div class="modal fade" id="gmpopup" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="staticBackdropLabel">GameMaker Details</h1>
-      </div>
-      <div class="modal-body">
-        <p> For GameMaker games, add the GameMaker Studio version and if its YYC or not to the comment field.
-          <a target="_blank" rel="noopener noreferrer" href="https://portmaster.games/porting.html#gms">You can check via this guide.</a></p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Understood</button>
-      </div>
-    </div>
-  </div>
-</div>
-  </main>
-  {% include 'partials/footer.html' %}
-  </div>
-  <script>
-    var suggestions = {{ suggestions | tojson }};
-    var unsupported_engines = {{ suggestion_content["unsupported_engine"] | tojson }};
-  </script>
-  <script src="{{ url_for('static', filename='js/new_suggestion.js') }}"></script>
-</body>
+    {% include 'partials/footer.html' %}
+    <script>
+      var suggestions = {{ suggestions | tojson }};
+      var unsupported_engines = {{ suggestion_content["unsupported_engine"] | tojson }};
+    </script>
+    <script src="{{ url_for('static', filename='js/new_suggestion.js') }}"></script>
+  </body>
 </html>

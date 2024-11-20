@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html data-bs-theme="auto" lang="en">
-<head>
+  <head>
     <title>Rate Port</title>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1" name="viewport" />
@@ -14,76 +14,35 @@
 
     <script src="{{ url_for('static', filename='js/color-modes.js') }}"></script>
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
-</head>
-<body class="bg-body-tertiary">
+  </head>
+  <body class="bg-body-tertiary">
     {% include 'partials/theme_dropdown.html' %}
-    <nav aria-label="Fourth navbar example" class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="https://portmaster.games">
-                <img height="35px" src="{{ url_for('static', filename='img/logo.svg') }}" />
-            </a>
-            <button aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation"
-                class="navbar-toggler" data-bs-target="#navbarsExample04" data-bs-toggle="collapse" type="button">
-                <span class="navbar-toggler-icon">
-                </span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarsExample04">
-                {% include 'partials/main_nav.html' %}
-                <ul class="navbar-nav" style="margin-right: 30px;">
-                    {% if admin == True %}
-                    <li class="nav-item">
-                        <a aria-current="page" class="nav-link active" href="admin">
-                            Admin
-                        </a>
-                    </li>
-                    {% endif %}
-                    <li class="nav-item">
-                        <a aria-current="page" class="nav-link active" href="new-suggestion">
-                            Submit Suggestion
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a aria-current="page" class="nav-link active" href="profile">
-                            Profile
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a aria-current="page" class="nav-link active" href="logout">
-                            Log Out
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    {% include 'partials/navbar.html' %}
     <br />
     <div class="container bg-body-secondary">
-        <h1 id="portname"></h1>
-        <div class="rating">
-            <span id="rating">0</span>/5
-        </div>
-        <div class="stars" id="stars">
-            <span class="star" data-value="1">★</span>
-            <span class="star" data-value="2">★</span>
-            <span class="star" data-value="3">★</span>
-            <span class="star" data-value="4">★</span>
-            <span class="star" data-value="5">★</span>
-        </div>
-        <!-- <p>Share your review:</p> <textarea id="review" placeholder="Write your review here"></textarea>-->
-        <button style="margin-right: 10px;" class="btn btn-primary" id="submit">Submit</button>
-        <button onclick="history.back()" class="btn btn-danger" id="submit">Cancel</button>
-        <div class="reviews" id="reviews">
-        </div>
+      <h1 id="portname"></h1>
+      <div class="rating">
+        <span id="rating">0</span>/5
+      </div>
+      <div class="stars" id="stars">
+        <span class="star" data-value="1">★</span>
+        <span class="star" data-value="2">★</span>
+        <span class="star" data-value="3">★</span>
+        <span class="star" data-value="4">★</span>
+        <span class="star" data-value="5">★</span>
+      </div>
+      <!-- <p>Share your review:</p> <textarea id="review" placeholder="Write your review here"></textarea>-->
+      <button style="margin-right: 10px;" class="btn btn-primary" id="submit">Submit</button>
+      <button onclick="history.back()" class="btn btn-danger" id="submit">Cancel</button>
+      <div class="reviews" id="reviews"></div>
+      <br>
+      <br>
     </div>
-    <br>
-    <br>
-    </main>
     {% include 'partials/footer.html' %}
-    </div>
     <script>
-        var userid = {{userid|tojson}};
-        var portfile = {{port|tojson}};
+      var userid = {{ userid| tojson}};
+      var portfile = {{ port| tojson}};
     </script>
     <script src="{{ url_for('static', filename='js/rate_port.js') }}"></script>
-</body>
+  </body>
 </html>

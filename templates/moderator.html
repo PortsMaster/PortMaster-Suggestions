@@ -1,179 +1,143 @@
 <!DOCTYPE html>
 <html data-bs-theme="auto" lang="en">
- <head>
-  <title>Moderator</title>
-  <meta charset="utf-8" />
-  <meta content="width=device-width, initial-scale=1" name="viewport" />
-  <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}" />
+  <head>
+    <title>Moderator</title>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}" />
 
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/shared.css') }}" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-docs.css') }}" />
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/shared.css') }}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-docs.css') }}" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.css" />
 
-  <script src="{{ url_for('static', filename='js/color-modes.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-  <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
- </head>
- <body class="bg-body-tertiary">
-  {% include 'partials/theme_dropdown.html' %}
-  <nav aria-label="Fourth navbar example" class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-    <div class="container-fluid">
-     <a class="navbar-brand" href="https://portmaster.games">
-      <img height="35px" src="{{ url_for('static', filename='img/logo.svg') }}"/>
-     </a>
-     <button aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#navbarsExample04" data-bs-toggle="collapse" type="button">
-      <span class="navbar-toggler-icon">
-      </span>
-     </button>
-     <div class="collapse navbar-collapse" id="navbarsExample04">
-      {% include 'partials/main_nav.html' %}
-      <ul class="navbar-nav" style="margin-right: 30px;">
-        {% if admin == True %}
-        <li class="nav-item">
-          <a aria-current="page" class="nav-link active" href="admin">
-           Admin
-          </a>
-         </li>
-         {% endif %}
-        <li class="nav-item">
-          <a aria-current="page" class="nav-link active" href="new-suggestion">
-           Submit Suggestion
-          </a>
-         </li>
-         <li class="nav-item">
-          <a aria-current="page" class="nav-link active" href="profile">
-           Profile
-          </a>
-         </li>
-        <li class="nav-item">
-          <a aria-current="page" class="nav-link active" href="logout">
-           Log Out
-          </a>
-         </li>
-      </ul>
-     </div>
-    </div>
-   </nav>
-  <br/>
-  <div class="container">
-   <main>
-    <div class="py-5 text-center">
-     <h2>
-      Moderator Tools
-     </h2>
-     <p class="lead">
-      Moderators have the ability to approve and edit suggestions, ban users.
-     </p>
-    </div>
-         <h2>Pending Suggestions</h2>
-         <div class="table-responsive-sm">
+    <script src="{{ url_for('static', filename='js/color-modes.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+  </head>
+  <body class="bg-body-tertiary">
+    {% include 'partials/theme_dropdown.html' %}
+    {% include 'partials/navbar.html' %}
+    <br />
+    <div class="container">
+      <main>
+        <div class="py-5 text-center">
+          <h2>
+            Moderator Tools
+          </h2>
+          <p class="lead">
+            Moderators have the ability to approve and edit suggestions, ban users.
+          </p>
+        </div>
+        <h2>Pending Suggestions</h2>
+        <div class="table-responsive-sm">
           <table class="display" id="suggestions">
-           <thead>
-             <th>Title</th>
-             <th>Creator (IDP Name)</th>
-             <th>Link</th>
-           </thead>
-           <tbody>
-             {% for suggestion in suggestions %}
-             {%if suggestion.status == "Pending"%}
-             <tr>
-               <td>{{ suggestion.title }}</td>
-               <td>{{ suggestion.creator }}</td>
-               <td><a href="/suggestion-moderator?id={{ suggestion.id }}" >Link</a></td>
-             </tr>
-             {% endif %}
-             {% endfor %}
-           </tbody>
+            <thead>
+              <th>Title</th>
+              <th>Creator (IDP Name)</th>
+              <th>Link</th>
+            </thead>
+            <tbody>
+              {% for suggestion in suggestions %}
+              {%if suggestion.status == "Pending"%}
+              <tr>
+                <td>{{ suggestion.title }}</td>
+                <td>{{ suggestion.creator }}</td>
+                <td><a href="/suggestion-moderator?id={{ suggestion.id }}">Link</a></td>
+              </tr>
+              {% endif %}
+              {% endfor %}
+            </tbody>
           </table>
-         </div>
-         <br>
-         <br>
-         <h2>Broken Images</h2>
-         <div class="table-responsive-sm">
+        </div>
+        <br>
+        <br>
+        <h2>Broken Images</h2>
+        <div class="table-responsive-sm">
           <table class="display" id="broken">
-           <thead>
-             <th>Title</th>
-             <th>Creator (IDP Name)</th>
-             <th>Link</th>
-           </thead>
-           <tbody>
-            {% for suggestion in suggestions %}
-             {%if suggestion.brokenimage%}
-             <tr>
-               <td>{{ suggestion.title }}</td>
-               <td>{{ suggestion.creator }}</td>
-               <td><a href="/suggestion-moderator?id={{ suggestion.id }}" >Link</a></td>
-             </tr>
-             {% endif %}
-             {% endfor %}
-           </tbody>
+            <thead>
+              <th>Title</th>
+              <th>Creator (IDP Name)</th>
+              <th>Link</th>
+            </thead>
+            <tbody>
+              {% for suggestion in suggestions %}
+              {%if suggestion.brokenimage%}
+              <tr>
+                <td>{{ suggestion.title }}</td>
+                <td>{{ suggestion.creator }}</td>
+                <td><a href="/suggestion-moderator?id={{ suggestion.id }}">Link</a></td>
+              </tr>
+              {% endif %}
+              {% endfor %}
+            </tbody>
           </table>
-         </div>
-         <br>
-         <br>
-         <h2>Users</h2>
-         <div class="table-responsive-sm">
+        </div>
+        <br>
+        <br>
+        <h2>Users</h2>
+        <div class="table-responsive-sm">
           <table class="display" id="users">
-           <thead>
-             <th>Username (IDP Name)</th>
-             <th>Display Name</th>
-             <th>Contact</th>
-             <th>Last Login</th>
-             <th>Status</th>
-             <th>Action</th>
-           </thead>
-           <tbody>
-             {% for user in users %}
-             <tr>
-               <td><a href="/view-user?userid={{ user.userid }}" >{{ user.idpname }}<a></td>
-               <td>{{ user.displayname }}</td>
-               <td>{{ user.contact }}</td>
-               <td>{{ user.lastlogin }}</td>
-               <td>{{ user.status }}</td>
-               {% if not user.admin or not moderator %}
-               <td><a  style="margin-right: 20px;" href="/ban-user?userid={{ user.userid }}" onclick="return confirm('Are you sure you want to BAN {{ user.ipdname }}?')">Ban</a></td>
-               {% else %}
-               <td></td>
-               {% endif %}
-             </tr>
-             {% endfor %}
-           </tbody>
+            <thead>
+              <th>Username (IDP Name)</th>
+              <th>Display Name</th>
+              <th>Contact</th>
+              <th>Last Login</th>
+              <th>Status</th>
+              <th>Action</th>
+            </thead>
+            <tbody>
+              {% for user in users %}
+              <tr>
+                <td><a href="/view-user?userid={{ user.userid }}">{{ user.idpname }}<a></td>
+                <td>{{ user.displayname }}</td>
+                <td>{{ user.contact }}</td>
+                <td>{{ user.lastlogin }}</td>
+                <td>{{ user.status }}</td>
+                {% if not user.admin or not moderator %}
+                <td><a style="margin-right: 20px;" href="/ban-user?userid={{ user.userid }}"
+                    onclick="return confirm('Are you sure you want to BAN {{ user.ipdname }}?')">Ban</a></td>
+                {% else %}
+                <td></td>
+                {% endif %}
+              </tr>
+              {% endfor %}
+            </tbody>
           </table>
-         </div>
-         <br>
-         <br>
-         <h2>Bans</h2>
-         <div class="table-responsive-sm">
+        </div>
+        <br>
+        <br>
+        <h2>Bans</h2>
+        <div class="table-responsive-sm">
           <table class="display" id="bans">
-           <thead>
-            <th>Username (IDP Name)</th>
-            <th>Display Name</th>
-            <th>Contact</th>
-             <th>Date</th>
-             <th>Action</th>
-           </thead>
-           <tbody>
-             {% for ban in bans %}
-             <tr>
-              <td><a href="/view-user?userid={{ ban.userid }}" >{{ ban.idpname }}<a></td>
+            <thead>
+              <th>Username (IDP Name)</th>
+              <th>Display Name</th>
+              <th>Contact</th>
+              <th>Date</th>
+              <th>Action</th>
+            </thead>
+            <tbody>
+              {% for ban in bans %}
+              <tr>
+                <td><a href="/view-user?userid={{ ban.userid }}">{{ ban.idpname }}<a></td>
                 <td>{{ ban.displayname }}</td>
                 <td>{{ ban.contact }}</td>
-               <td>{{ ban.date }}</td>
-               <td><a href="/unban-user?userid={{ ban.userid }}" onclick="return confirm('Are you sure you want to UNBAN {{ban.username}}')">Unban</a></td>
-             </tr>
-             {% endfor %}
-           </tbody>
+                <td>{{ ban.date }}</td>
+                <td><a href="/unban-user?userid={{ ban.userid }}"
+                    onclick="return confirm('Are you sure you want to UNBAN {{ban.username}}')">Unban</a></td>
+              </tr>
+              {% endfor %}
+            </tbody>
           </table>
-         </div>
+        </div>
+        <br>
+        <br>
+      </main>
     </div>
-    <br>
-    <br>
-   </main>
-   {% include 'partials/footer.html' %}
-  </div>
-  <script src="{{ url_for('static', filename='js/moderator.js') }}"></script>
- </body>
+    {% include 'partials/footer.html' %}
+    <script src="{{ url_for('static', filename='js/moderator.js') }}"></script>
+  </body>
 </html>

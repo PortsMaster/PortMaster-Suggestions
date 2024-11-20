@@ -1,260 +1,217 @@
-
 <!DOCTYPE html>
 <html data-bs-theme="auto" lang="en">
- <head>
-  <title>Suggestion Details</title>
-  <meta charset="utf-8" />
-  <meta content="width=device-width, initial-scale=1" name="viewport" />
-  <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}" />
+  <head>
+    <title>Suggestion Details</title>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}" />
 
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/shared.css') }}"/>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"/>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}"/>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-docs.css') }}"/>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/suggestion_details.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/shared.css') }}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-docs.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/suggestion_details.css') }}" />
 
-  <script src="{{ url_for('static', filename='js/color-modes.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
- </head>
- <body>
-  {% include 'partials/theme_dropdown.html' %}
-  <nav aria-label="Fourth navbar example" class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-    <div class="container-fluid">
-     <a class="navbar-brand" href="https://portmaster.games">
-      <img height="35px" src="{{ url_for('static', filename='img/logo.svg') }}"/>
-     </a>
-     <button aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#navbarsExample04" data-bs-toggle="collapse" type="button">
-      <span class="navbar-toggler-icon">
-      </span>
-     </button>
-     <div class="collapse navbar-collapse" id="navbarsExample04">
-      {% include 'partials/main_nav.html' %}
-      <ul class="navbar-nav" style="margin-right: 30px;">
-        {% if admin == True %}
-        <li class="nav-item">
-          <a aria-current="page" class="nav-link active" href="admin">
-           Admin
-          </a>
-         </li>
-         {% endif %}
-         {% if moderator == True or admin == True %}
-         <li class="nav-item">
-           <a aria-current="page" class="nav-link active" href="moderator">
-            Moderator
-           </a>
-          </li>
-          {% endif %}
-        <li class="nav-item">
-          <a aria-current="page" class="nav-link active" href="new-suggestion">
-           Submit Suggestion
-          </a>
-         </li>
-         <li class="nav-item">
-          <a aria-current="page" class="nav-link active" href="profile">
-           Profile
-          </a>
-         </li>
-        <li class="nav-item">
-          <a aria-current="page" class="nav-link active" href="logout">
-           Log Out
-          </a>
-         </li>
-      </ul>
-     </div>
-    </div>
-   </nav>
-  <br/>
-  <br/>
-  <main class="bg-body-tertiary">
-   <div class="container">
-    <div class="px-2 pt-4 text-center">
-     <!-- Title -->
-     <h1 class="display-4 fw-bold text-body-emphasis mb-4" id="title">{{suggestion.title}}</h1>
-     <!-- Screenshot -->
-     <div >
-      <div >
-       <img alt="Example image" class="img-fluid border rounded-3 p3 mb-5shadow-lg" height="100%" id="screenshot" loading="lazy" src="{{suggestion.imageurl}}" width="auto%"/>
-      </div>
-     </div>
-     <!-- HEADER -->
-     <div class="col-lg-8 mx-auto">
-      <!-- Description -->
-      <div class="comment">
-       <p class="lead mb-4 mt-4" id="comment"></p>
-      </div>
-     </div>
-    </div>
-    <div class="px-4 py-5 pt-0" id="icon-grid">
-        <h2 class="pb-2 border-bottom">
+    <script src="{{ url_for('static', filename='js/color-modes.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+  </head>
+  <body>
+    {% include 'partials/theme_dropdown.html' %}
+    {% include 'partials/navbar.html' %}
+    <br />
+    <br />
+    <main class="bg-body-tertiary">
+      <div class="container">
+        <div class="px-2 pt-4 text-center">
+          <!-- Title -->
+          <h1 class="display-4 fw-bold text-body-emphasis mb-4" id="title">{{suggestion.title}}</h1>
+          <!-- Screenshot -->
+          <div>
+            <div>
+              <img alt="Example image" class="img-fluid border rounded-3 p3 mb-5shadow-lg" height="100%" id="screenshot"
+                loading="lazy" src="{{suggestion.imageurl}}" width="auto%" />
+            </div>
+          </div>
+          <!-- HEADER -->
+          <div class="col-lg-8 mx-auto">
+            <!-- Description -->
+            <div class="comment">
+              <p class="lead mb-4 mt-4" id="comment"></p>
+            </div>
+          </div>
+        </div>
+        <div class="px-4 py-5 pt-0" id="icon-grid">
+          <h2 class="pb-2 border-bottom">
             Comment
-           </h2>
-           <div style="word-wrap: pre-line;" class="comment">
+          </h2>
+          <div style="word-wrap: pre-line;" class="comment">
             <p class="lead mb-4 mt-4" id="inst" style="white-space: pre-line;">{{suggestion.comment}}</p>
-           </div>
-     <h2 class="pb-2 border-bottom">
-      Suggestion Details
-     </h2>
-     <!-- Feature grid -->
-     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 py-5">
-      <div class="col d-flex align-items-start">
-        <i class="ft-s bi bi-link-45deg me-3">
-        </i>
-        <!-- Genres -->
-        <div class="website">
-         <h3 class="fw-bold mb-0 fs-4 text-body-emphasis">
-          <a href="{{suggestion.weburl}}">Website</a>
-         </h3>
-         
+          </div>
+          <h2 class="pb-2 border-bottom">
+            Suggestion Details
+          </h2>
+          <!-- Feature grid -->
+          <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 py-5">
+            <div class="col d-flex align-items-start">
+              <i class="ft-s bi bi-link-45deg me-3">
+              </i>
+              <!-- Genres -->
+              <div class="website">
+                <h3 class="fw-bold mb-0 fs-4 text-body-emphasis">
+                  <a href="{{suggestion.weburl}}">Website</a>
+                </h3>
+
+              </div>
+            </div>
+            <div class="col d-flex align-items-start">
+              <i class="ft-s bi bi-card-text me-3">
+              </i>
+              <!-- Genres -->
+              <div class="license">
+                <h3 class="fw-bold mb-0 fs-4 text-body-emphasis">
+                  License
+                </h3>
+                <div class="d-flex gap-2 mb-3">
+                  <span class="badge bg-secondary">{{suggestion.license}}</span>
+                </div>
+              </div>
+            </div>
+            <div class="col d-flex align-items-start">
+              <i class="ft-s bi bi-card-text me-3">
+              </i>
+              <!-- Genres -->
+              <div class="content">
+                <h3 class="fw-bold mb-0 fs-4 text-body-emphasis">
+                  Content
+                </h3>
+                <div class="d-flex gap-2 mb-3">
+                  <span class="badge bg-secondary">{{suggestion.content}}</span>
+                </div>
+              </div>
+            </div>
+            <div class="col d-flex align-items-start">
+              <i class="ft-s bi bi-controller me-3">
+              </i>
+              <!-- Genres -->
+              <div class="engine">
+                <h3 class="fw-bold mb-0 fs-4 text-body-emphasis">
+                  Engine
+                </h3>
+                <div class="d-flex gap-2 mb-3">
+                  <span class="badge bg-secondary">{{suggestion.engine}}</span>
+                </div>
+              </div>
+            </div>
+            <div class="col d-flex align-items-start">
+              <i class="ft-s bi bi-bar-chart-fill me-3">
+              </i>
+              <!-- Genres -->
+              <div class="feasibility">
+                <h3 class="fw-bold mb-0 fs-4 text-body-emphasis">
+                  Feasibility
+                </h3>
+                <div class="d-flex gap-2 mb-3">
+                  {% if suggestion.feasibility == "Low"%}
+                  <span class="badge bg-danger">{{suggestion.feasibility}}</span>
+                  {% endif %}
+                  {% if suggestion.feasibility == "Medium"%}
+                  <span class="badge bg-warning">{{suggestion.feasibility}}</span>
+                  {% endif %}
+                  {% if suggestion.feasibility == "High"%}
+                  <span class="badge bg-success">{{suggestion.feasibility}}</span>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            <div class="col d-flex align-items-start">
+              <i class="ft-s bi bi-card-checklist me-3">
+              </i>
+              <!-- Genres -->
+              <div class="status">
+                <h3 class="fw-bold mb-0 fs-4 text-body-emphasis">
+                  Status
+                </h3>
+                <div class="d-flex gap-2 mb-3">
+                  {% if suggestion.status == "Open"%}
+                  <span class="badge bg-info">{{suggestion.status}}</span>
+                  {% endif %}
+                  {% if suggestion.status == "Complete"%}
+                  <span class="badge bg-success">{{suggestion.status}}</span>
+                  {% endif %}
+                  {% if suggestion.status == "Rejected"%}
+                  <span class="badge bg-danger">{{suggestion.status}}</span>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            <div class="col d-flex align-items-start">
+              <i class="ft-s bi bi-keyboard-fill me-3">
+              </i>
+              <!-- Genres -->
+              <div class="language">
+                <h3 class="fw-bold mb-0 fs-4 text-body-emphasis">
+                  Programming Language
+                </h3>
+                <div class="d-flex gap-2 mb-3">
+                  <span class="badge bg-secondary">{{suggestion.language}}</span>
+                </div>
+              </div>
+            </div>
+            <div class="col d-flex align-items-start">
+              <i class="ft-s bi bi-dpad me-3">
+              </i>
+              <!-- Genres -->
+              <div class="category">
+                <h3 class="fw-bold mb-0 fs-4 text-body-emphasis">
+                  Category
+                </h3>
+                <div class="d-flex gap-2 mb-3">
+                  <span class="badge bg-secondary">{{suggestion.category}}</span>
+                </div>
+              </div>
+            </div>
+            <div class="col d-flex align-items-start">
+              <i class="ft-s bi bi-boxes me-3">
+              </i>
+              <!-- Requirements -->
+              <div class="Dependencies">
+                <h3 class="fw-bold mb-0 fs-4 text-body-emphasis">
+                  Dependencies
+                </h3>
+                <div class="d-flex gap-2 mb-3">
+                  {% set dependencies = suggestion.dependencies.split(',') %}
+                  {% for dependency in dependencies %}
+                  <span class="badge bg-secondary">{{dependency}}</span>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+            <div class="col d-flex align-items-start">
+              <i class="ft-s bi bi-arrow-down-up me-3">
+              </i>
+              <!-- download Count-->
+              <div class="vote_count">
+                <h3 class="fw-bold mb-0 fs-4 text-body-emphasis">
+                  Votes
+                </h3>
+                <p id="vote_count">{{suggestion.votes}}</p>
+              </div>
+            </div>
+            <div class="col d-flex align-items-start">
+              <i class="ft-s bi bi-calendar me-3">
+              </i>
+              <!-- Last Updated-->
+              <div class="date_added">
+                <h3 class="fw-bold mb-0 fs-4 text-body-emphasis">
+                  Date Added
+                </h3>
+                <p id="date_added">{{suggestion.date}}</p>
+              </div>
+            </div>
+          </div>
         </div>
-       </div>
-      <div class="col d-flex align-items-start">
-       <i class="ft-s bi bi-card-text me-3">
-       </i>
-       <!-- Genres -->
-       <div class="license">
-        <h3 class="fw-bold mb-0 fs-4 text-body-emphasis">
-         License
-        </h3>
-        <div class="d-flex gap-2 mb-3">
-        <span class="badge bg-secondary">{{suggestion.license}}</span>
-        </div>
-       </div>
       </div>
-      <div class="col d-flex align-items-start">
-        <i class="ft-s bi bi-card-text me-3">
-        </i>
-        <!-- Genres -->
-        <div class="content">
-         <h3 class="fw-bold mb-0 fs-4 text-body-emphasis">
-          Content
-         </h3>
-         <div class="d-flex gap-2 mb-3">
-          <span class="badge bg-secondary">{{suggestion.content}}</span>
-         </div>
-        </div>
-       </div>
-      <div class="col d-flex align-items-start">
-        <i class="ft-s bi bi-controller me-3">
-        </i>
-        <!-- Genres -->
-        <div class="engine">
-         <h3 class="fw-bold mb-0 fs-4 text-body-emphasis">
-          Engine
-         </h3>
-         <div class="d-flex gap-2 mb-3">
-          <span class="badge bg-secondary">{{suggestion.engine}}</span>
-         </div>
-        </div>
-       </div>
-       <div class="col d-flex align-items-start">
-        <i class="ft-s bi bi-bar-chart-fill me-3">
-        </i>
-        <!-- Genres -->
-        <div class="feasibility">
-         <h3 class="fw-bold mb-0 fs-4 text-body-emphasis">
-            Feasibility
-         </h3>
-         <div class="d-flex gap-2 mb-3">
-          {% if suggestion.feasibility == "Low"%}
-          <span class="badge bg-danger">{{suggestion.feasibility}}</span>
-          {% endif %}
-          {% if suggestion.feasibility == "Medium"%}
-          <span class="badge bg-warning">{{suggestion.feasibility}}</span>
-          {% endif %}
-          {% if suggestion.feasibility == "High"%}
-          <span class="badge bg-success">{{suggestion.feasibility}}</span>
-          {% endif %}
-         </div>
-        </div>
-       </div>
-       <div class="col d-flex align-items-start">
-        <i class="ft-s bi bi-card-checklist me-3">
-        </i>
-        <!-- Genres -->
-        <div class="status">
-         <h3 class="fw-bold mb-0 fs-4 text-body-emphasis">
-            Status
-         </h3>
-         <div class="d-flex gap-2 mb-3">
-          {% if suggestion.status == "Open"%}
-          <span class="badge bg-info">{{suggestion.status}}</span>
-          {% endif %}
-          {% if suggestion.status == "Complete"%}
-          <span class="badge bg-success">{{suggestion.status}}</span>
-          {% endif %}
-          {% if suggestion.status == "Rejected"%}
-          <span class="badge bg-danger">{{suggestion.status}}</span>
-          {% endif %}
-         </div>
-        </div>
-       </div>
-       <div class="col d-flex align-items-start">
-        <i class="ft-s bi bi-keyboard-fill me-3">
-        </i>
-        <!-- Genres -->
-        <div class="language">
-         <h3 class="fw-bold mb-0 fs-4 text-body-emphasis">
-            Programming Language
-         </h3>
-         <div class="d-flex gap-2 mb-3">
-          <span class="badge bg-secondary">{{suggestion.language}}</span>
-         </div>
-        </div>
-       </div>
-       <div class="col d-flex align-items-start">
-        <i class="ft-s bi bi-dpad me-3">
-        </i>
-        <!-- Genres -->
-        <div class="category">
-         <h3 class="fw-bold mb-0 fs-4 text-body-emphasis">
-            Category
-         </h3>
-         <div class="d-flex gap-2 mb-3">
-          <span class="badge bg-secondary">{{suggestion.category}}</span>
-         </div>
-        </div>
-       </div>
-      <div class="col d-flex align-items-start">
-       <i class="ft-s bi bi-boxes me-3">
-       </i>
-       <!-- Requirements -->
-       <div class="Dependencies">
-        <h3 class="fw-bold mb-0 fs-4 text-body-emphasis">
-         Dependencies
-        </h3>
-        <div class="d-flex gap-2 mb-3">
-          {% set dependencies = suggestion.dependencies.split(',') %}
-          {% for dependency in dependencies  %}
-          <span class="badge bg-secondary">{{dependency}}</span>
-         {% endfor %}
-        </div>
-       </div>
-      </div>
-      <div class="col d-flex align-items-start">
-       <i class="ft-s bi bi-arrow-down-up me-3">
-       </i>
-       <!-- download Count-->
-       <div class="vote_count">
-        <h3 class="fw-bold mb-0 fs-4 text-body-emphasis">
-         Votes
-        </h3>
-        <p id="vote_count">{{suggestion.votes}}</p>
-       </div>
-      </div>
-      <div class="col d-flex align-items-start">
-       <i class="ft-s bi bi-calendar me-3">
-       </i>
-       <!-- Last Updated-->
-       <div class="date_added">
-        <h3 class="fw-bold mb-0 fs-4 text-body-emphasis">
-         Date Added
-        </h3>
-        <p id="date_added">{{suggestion.date}}</p>
-       </div>
-      </div>
-     </div>
-    </div>
-   </div>
-  </main>
- </body>
+    </main>
+    {% include 'partials/footer.html' %}
+  </body>
 </html>

@@ -1,170 +1,138 @@
 <!DOCTYPE html>
 <html data-bs-theme="auto" lang="en">
- <head>
-  <title>Admin</title>
-  <meta charset="utf-8" />
-  <meta content="width=device-width, initial-scale=1" name="viewport" />
-  <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}" />
+  <head>
+    <title>Admin</title>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}" />
 
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/shared.css') }}" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-docs.css') }}" />
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/shared.css') }}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-docs.css') }}" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.css" />
 
-  <script src="{{ url_for('static', filename='js/color-modes.js') }}"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-  <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
- </head>
- <body class="bg-body-tertiary">
-  {% include 'partials/theme_dropdown.html' %}
-  <nav aria-label="Fourth navbar example" class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-    <div class="container-fluid">
-     <a class="navbar-brand" href="https://portmaster.games">
-      <img height="35px" src="{{ url_for('static', filename='img/logo.svg') }}"/>
-     </a>
-     <button aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#navbarsExample04" data-bs-toggle="collapse" type="button">
-      <span class="navbar-toggler-icon">
-      </span>
-     </button>
-     <div class="collapse navbar-collapse" id="navbarsExample04">
-      {% include 'partials/main_nav.html' %}
-      <ul class="navbar-nav" style="margin-right: 30px;">
-         {% if moderator == True or admin == True %}
-         <li class="nav-item">
-           <a aria-current="page" class="nav-link active" href="moderator">
-            Moderator
-           </a>
-          </li>
-          {% endif %}
-        <li class="nav-item">
-          <a aria-current="page" class="nav-link active" href="new-suggestion">
-           Submit Suggestion
-          </a>
-         </li>
-         <li class="nav-item">
-          <a aria-current="page" class="nav-link active" href="profile">
-           Profile
-          </a>
-         </li>
-        <li class="nav-item">
-          <a aria-current="page" class="nav-link active" href="logout">
-           Log Out
-          </a>
-         </li>
-      </ul>
-     </div>
-    </div>
-   </nav>
-  <br/>
-  <div class="container">
-   <main>
-    <div class="py-5 text-center">
-     <h2>
-      Admin Tools
-     </h2>
-     <a class="btn btn-danger btn-sm" onclick="backup()" name="" value=""  type="button">Backup Database</a>
-    </div>
-    <br>
-    <div class="row g-5 justify-content-center">
-         </div>
-         <h2>Admins</h2>
-         <div class="table-responsive-sm">
+    <script src="{{ url_for('static', filename='js/color-modes.js') }}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+  </head>
+  <body class="bg-body-tertiary">
+    {% include 'partials/theme_dropdown.html' %}
+    {% include 'partials/navbar.html' %}
+    <br />
+    <div class="container">
+      <main>
+        <div class="py-5 text-center">
+          <h2>
+            Admin Tools
+          </h2>
+          <a class="btn btn-danger btn-sm" onclick="backup()" name="" value="" type="button">Backup Database</a>
+        </div>
+        <br>
+        <div class="row g-5 justify-content-center">
+        </div>
+        <h2>Admins</h2>
+        <div class="table-responsive-sm">
           <table class="display" id="admins">
-           <thead>
-            <th>Username (IDP Name)</th>
-            <th>Display Name</th>
-            <th>Contact</th>
-             <th>Action</th>
-           </thead>
-           <tbody>
-             {% for admin in admins %}
-             <tr>
-              <td><a href="/view-user?userid={{ admin.userid }}" >{{ admin.idpname }}<a></td>
+            <thead>
+              <th>Username (IDP Name)</th>
+              <th>Display Name</th>
+              <th>Contact</th>
+              <th>Action</th>
+            </thead>
+            <tbody>
+              {% for admin in admins %}
+              <tr>
+                <td><a href="/view-user?userid={{ admin.userid }}">{{ admin.idpname }}<a></td>
                 <td>{{ admin.displayname }}</td>
                 <td>{{ admin.contact }}</td>
-               <td><a href="/remove-privilege?privilege=admin&userid={{ admin.userid }}" onclick="return confirm('Are you sure you want to delete?')">Remove</a></td>
-             </tr>
-             {% endfor %}
-           </tbody>
+                <td><a href="/remove-privilege?privilege=admin&userid={{ admin.userid }}"
+                    onclick="return confirm('Are you sure you want to delete?')">Remove</a></td>
+              </tr>
+              {% endfor %}
+            </tbody>
           </table>
-         </div>
+        </div>
         <br>
         <h2>Moderators</h2>
         <div class="table-responsive-sm">
-         <table class="display" id="moderators">
-          <thead>
-            <th>Username (IDP Name)</th>
-            <th>Display Name</th>
-            <th>Contact</th>
-            <th>Action</th>
-          </thead>
-          <tbody>
-            {% for moderator in moderators %}
-            <tr>
-              <td><a href="/view-user?userid={{ moderator.userid }}" >{{ moderator.idpname }}<a></td>
+          <table class="display" id="moderators">
+            <thead>
+              <th>Username (IDP Name)</th>
+              <th>Display Name</th>
+              <th>Contact</th>
+              <th>Action</th>
+            </thead>
+            <tbody>
+              {% for moderator in moderators %}
+              <tr>
+                <td><a href="/view-user?userid={{ moderator.userid }}">{{ moderator.idpname }}<a></td>
                 <td>{{ moderator.displayname }}</td>
                 <td>{{ moderator.contact }}</td>
-              <td><a href="/remove-privilege?privilege=moderator&userid={{ moderator.userid }}" onclick="return confirm('Are you sure you want to delete?')">Remove</a></td>
-            </tr>
-            {% endfor %}
-          </tbody>
-         </table>
+                <td><a href="/remove-privilege?privilege=moderator&userid={{ moderator.userid }}"
+                    onclick="return confirm('Are you sure you want to delete?')">Remove</a></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
         <br>
         <h2>Users</h2>
         <div class="table-responsive-sm">
-         <table class="display" id="users">
-          <thead>
-            <th>Username (IDP Name)</th>
-            <th>Display Name</th>
-            <th>Contact</th>
-            <th>Last Login</th>
-            <th>Status</th>
-            <th>Action</th>
-          </thead>
-          <tbody>
-            {% for user in users %}
-            <tr>
-              <td><a href="/view-user?userid={{ user.userid }}" >{{ user.idpname }}<a></td>
-              <td>{{ user.displayname }}</td>
-              <td>{{ user.contact }}</td>
-              <td>{{ user.lastlogin }}</td>
-              <td>{{ user.status }}</td>
-              <td><a  style="margin-right: 20px;" href="/add-privilege?privilege=moderator&userid={{ user.userid }}" onclick="return confirm('Are you sure you want to make {{ user.idpname }} a MODERATOR?')">Make Moderator</a><a href="/add-privilege?privilege=admin&userid={{ user.userid }}" onclick="return confirm('Are you sure you want to make {{ user.idpname }} an ADMIN?')">Make Admin</a></td>
-            </tr>
-            {% endfor %}
-          </tbody>
-         </table>
+          <table class="display" id="users">
+            <thead>
+              <th>Username (IDP Name)</th>
+              <th>Display Name</th>
+              <th>Contact</th>
+              <th>Last Login</th>
+              <th>Status</th>
+              <th>Action</th>
+            </thead>
+            <tbody>
+              {% for user in users %}
+              <tr>
+                <td><a href="/view-user?userid={{ user.userid }}">{{ user.idpname }}<a></td>
+                <td>{{ user.displayname }}</td>
+                <td>{{ user.contact }}</td>
+                <td>{{ user.lastlogin }}</td>
+                <td>{{ user.status }}</td>
+                <td><a style="margin-right: 20px;" href="/add-privilege?privilege=moderator&userid={{ user.userid }}"
+                    onclick="return confirm('Are you sure you want to make {{ user.idpname }} a MODERATOR?')">Make
+                    Moderator</a><a href="/add-privilege?privilege=admin&userid={{ user.userid }}"
+                    onclick="return confirm('Are you sure you want to make {{ user.idpname }} an ADMIN?')">Make Admin</a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
         <br>
         <h2>Events</h2>
         <div class="table-responsive-sm">
-         <table class="display" id="history">
-          <thead>
-            <th>Source</th>
-            <th>Target</th>
-            <th>Type</th>
-            <th>Date</th>
-          </thead>
-          <tbody>
-            {% for item in history %}
-            <tr>
-              <td><a href="/view-user?userid={{ item.source }}" >{{ item.source_idpname }}<a></td>
-                <td><a href="/view-user?userid={{ item.target }}" >{{ item.target_idpname }}<a></td>
-              <td>{{ item.type }}</td>
-              <td>{{ item.date }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-         </table>
+          <table class="display" id="history">
+            <thead>
+              <th>Source</th>
+              <th>Target</th>
+              <th>Type</th>
+              <th>Date</th>
+            </thead>
+            <tbody>
+              {% for item in history %}
+              <tr>
+                <td><a href="/view-user?userid={{ item.source }}">{{ item.source_idpname }}<a></td>
+                <td><a href="/view-user?userid={{ item.target }}">{{ item.target_idpname }}<a></td>
+                <td>{{ item.type }}</td>
+                <td>{{ item.date }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
+        <br>
+        <br>
+      </main>
     </div>
-    <br>
-    <br>
-   </main>
-   {% include 'partials/footer.html' %}
-  </div>
-  <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
- </body>
+    {% include 'partials/footer.html' %}
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+  </body>
 </html>
