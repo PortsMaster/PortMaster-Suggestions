@@ -684,25 +684,27 @@ def update_profile(userinfo,admin,moderator):
 @app.route("/view-user")
 @requires_auth
 def view_user(userinfo,admin,moderator):
+    loggedin = has_session()
     if admin or moderator:
         userid = request.args.get('userid')
         user = User.query.filter_by(userid=userid).first()
         canEdit = False
         if moderator or admin:
             canEdit = True
-        return render_template('view_user.html', user_profile=userinfo,user=user,canEdit=canEdit,moderator=moderator,admin=admin)
+        return render_template('view_user.html', user_profile=userinfo,user=user,canEdit=canEdit,moderator=moderator,admin=admin,loggedin=loggedin)
     else:
         return redirect('/')
 
 @app.route("/edit-profile")
 @requires_auth
 def edit_profile(userinfo,admin,moderator):
+    loggedin = has_session()
     idpid = session.get('user').get("userinfo")["sub"]
     user = User.query.filter_by(idpid=idpid).first()
     canEdit = False
     if moderator or admin:
         canEdit = True
-    return render_template('edit_profile.html',user_profile=userinfo,user=user,canEdit=canEdit,moderator=moderator,admin=admin)
+    return render_template('edit_profile.html',user_profile=userinfo,user=user,canEdit=canEdit,moderator=moderator,admin=admin,loggedin=loggedin)
 
 @app.route("/profile")
 @requires_auth
@@ -760,7 +762,7 @@ def moderator(userinfo,admin,moderator):
             ban.idpname = user.idpname
             ban.displayname = user.displayname
             ban.contact = user.contact
-    return render_template('moderator.html',admin=admin,moderator=moderator,admins=admins,moderators=moderators,suggestions=suggestions,users=users,bans=bans)
+    return render_template('moderator.html',admin=admin,moderator=moderator,loggedin=loggedin,admins=admins,moderators=moderators,suggestions=suggestions,users=users,bans=bans)
 
 @app.route("/admin")
 @requires_auth
@@ -788,7 +790,7 @@ def admin(userinfo,admin,moderator):
         item.source_idpname = source_user.idpname
         target_user = User.query.filter_by(userid=item.target).first()
         item.target_idpname = target_user.idpname
-    return render_template('admin.html',admin=admin,moderator=moderator,admins=admins,moderators=moderators,users=users,history=history)
+    return render_template('admin.html',admin=admin,moderator=moderator,loggedin=loggedin,admins=admins,moderators=moderators,users=users,history=history)
 
 
 
