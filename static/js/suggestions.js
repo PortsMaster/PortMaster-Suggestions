@@ -6,13 +6,12 @@ window.addEventListener('DOMContentLoaded', async function() {
     const suggestions = await fetchSuggestions();
     const values = getSuggestionValues(suggestions);
 
+    const getCard = memoize(createCard, port => port.id);
     const { containerElement, updateContainer, filterControls } = createContainer({ values, onchange });
     const filterState = JSON.parse(sessionStorage.getItem('filterState'));
     setFilterState(filterControls, filterState);
     updateResult(filterState);
     appElement.replaceChildren(containerElement);
-
-    const getCard = memoize(createCard, port => port.id);
 
     function updateResult(filterState) {
         updateContainer({
