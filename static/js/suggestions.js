@@ -8,7 +8,7 @@ window.addEventListener('DOMContentLoaded', async function() {
 
     const getCard = memoize(createCard, port => port.id);
     const { containerElement, updateContainer, filterControls } = createContainer({ values, onchange });
-    const filterState = JSON.parse(sessionStorage.getItem('filterState'));
+    const filterState = defaultFilterState(JSON.parse(sessionStorage.getItem('filterState')));
     setFilterState(filterControls, filterState);
     updateResult(filterState);
     appElement.replaceChildren(containerElement);
@@ -481,6 +481,31 @@ function createDropdowns({ values, onchange }) {
 //#endregion
 
 //#region Filter cards
+function defaultFilterState(filterState) {
+    const searchParams = new URLSearchParams(location.search);
+
+    return {
+        search: searchParams.get('search') ?? filterState?.search ?? '',
+        sort: {
+            date: true,
+            voteCount: true,
+            title: false,
+            ...filterState?.sort,
+        },
+        values: {
+            status: {},
+            feasibility: {},
+            engine: {},
+            category: {},
+            content: {},
+            license: {},
+            language: {},
+            dependency: {},
+            ...filterState?.values,
+        },
+    };
+}
+
 function getFilterState({ searchInput, sortRadio, checkboxes }) {
     return {
         search: searchInput.value.trim(),
