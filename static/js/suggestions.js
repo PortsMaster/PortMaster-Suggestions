@@ -9,17 +9,23 @@ window.addEventListener('DOMContentLoaded', async function() {
     const { containerElement, updateContainer, filterControls } = createContainer({ values, onchange });
     const filterState = JSON.parse(sessionStorage.getItem('filterState'));
     setFilterState(filterControls, filterState);
+    updateResult(filterState);
     appElement.replaceChildren(containerElement);
 
-    function onchange() {
-        const filterState = getFilterState(filterControls);
-        sessionStorage.setItem('filterState', JSON.stringify(filterState));
+    const getCard = memoize(createCard, port => port.id);
+
+    function updateResult(filterState) {
         updateContainer({
             ports: createPorts(getFilteredPorts(ports, filterState), filterState.search),
             cards: getFilteredSuggestions(suggestions, filterState).map(getCard),
         });
     }
-    onchange();
+
+    function onchange() {
+        const filterState = getFilterState(filterControls);
+        sessionStorage.setItem('filterState', JSON.stringify(filterState));
+        updateResult(filterState);
+    }
 });
 
 //#region Helper functions
@@ -77,11 +83,29 @@ function createElement(tagName, props, children) {
 async function batchReplaceChildren(batchSize, container, children) {
     container.replaceChildren();
     for (const [i, child] of children.entries()) {
-        if ((i + 1) % batchSize === 0) {
+        if (i !== 0 && i % batchSize === 0) {
             await new Promise(resolve => setTimeout(resolve));
         }
         container.appendChild(child);
     }
+}
+
+function memoize(func, resolver) {
+    function memoized(...args) {
+        const key = resolver ? resolver.apply(this, args) : args[0];
+
+        if (memoized.cache.has(key)) {
+            return memoized.cache.get(key);
+        }
+        
+        const result = func.apply(this, args);
+        memoized.cache.set(key, result);
+        return result;
+    };
+
+    memoized.cache = new Map();
+
+    return memoized;
 }
 
 function getCheckedValues(elements) {
@@ -273,7 +297,7 @@ function createSort({ onchange }) {
         createElement('label', { htmlFor: 'sortNewest', className: 'btn btn-outline-primary' }, 'Most Recent'),
     ]);
 
-    return { sortElement, sortRadio }
+    return { sortElement, sortRadio };
 }
 
 function createPorts(ports, search) {
@@ -472,7 +496,7 @@ function getFilterState({ searchInput, sortRadio, checkboxes }) {
             language: getCheckedValues(checkboxes.language),
             dependency: getCheckedValues(checkboxes.dependency),
         },
-    }
+    };
 }
 
 function setFilterState({ searchInput, sortRadio, checkboxes }, filterState) {
@@ -655,16 +679,5 @@ function createCard(port) {
             ]),
         ]),
     ]);
-}
-
-const portCardsMap = new Map();
-function getCard(port) {
-    if (portCardsMap.has(port.id)) {
-        return portCardsMap.get(port.id);
-    } else {
-        const card = createCard(port);
-        portCardsMap.set(port.id, card);
-        return card;
-    }
 }
 //#endregion
