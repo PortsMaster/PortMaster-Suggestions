@@ -6,20 +6,25 @@ window.addEventListener('DOMContentLoaded', async function() {
     const suggestions = await fetchSuggestions();
     const values = getSuggestionValues(suggestions);
 
+    const getCard = memoize(createCard, port => port.id);
     const { containerElement, updateContainer, filterControls } = createContainer({ values, onchange });
-    const filterState = JSON.parse(sessionStorage.getItem('filterState'));
+    const filterState = defaultFilterState(JSON.parse(sessionStorage.getItem('filterState')));
     setFilterState(filterControls, filterState);
+    updateResult(filterState);
     appElement.replaceChildren(containerElement);
 
-    function onchange() {
-        const filterState = getFilterState(filterControls);
-        sessionStorage.setItem('filterState', JSON.stringify(filterState));
+    function updateResult(filterState) {
         updateContainer({
             ports: createPorts(getFilteredPorts(ports, filterState), filterState.search),
             cards: getFilteredSuggestions(suggestions, filterState).map(getCard),
         });
     }
-    onchange();
+
+    function onchange() {
+        const filterState = getFilterState(filterControls);
+        sessionStorage.setItem('filterState', JSON.stringify(filterState));
+        updateResult(filterState);
+    }
 });
 
 //#region Helper functions
@@ -77,11 +82,29 @@ function createElement(tagName, props, children) {
 async function batchReplaceChildren(batchSize, container, children) {
     container.replaceChildren();
     for (const [i, child] of children.entries()) {
-        if ((i + 1) % batchSize === 0) {
+        if (i !== 0 && i % batchSize === 0) {
             await new Promise(resolve => setTimeout(resolve));
         }
         container.appendChild(child);
     }
+}
+
+function memoize(func, resolver) {
+    function memoized(...args) {
+        const key = resolver ? resolver.apply(this, args) : args[0];
+
+        if (memoized.cache.has(key)) {
+            return memoized.cache.get(key);
+        }
+        
+        const result = func.apply(this, args);
+        memoized.cache.set(key, result);
+        return result;
+    };
+
+    memoized.cache = new Map();
+
+    return memoized;
 }
 
 function getCheckedValues(elements) {
@@ -265,15 +288,15 @@ function createSort({ onchange }) {
     const sortElement = createElement('div', {
         className: 'btn-group',
     }, [
-        createElement('input', { ref: el => sortRadio.title = el, id: 'sortAZ', className: 'btn-check', type: 'radio', name: 'sortRadio', autocomplete: 'off', checked: true, onchange }),
-        createElement('label', { htmlFor: 'sortAZ', className: 'btn btn-outline-primary' }, 'A - Z'),
-        createElement('input', { ref: el => sortRadio.voteCount = el, id: 'sortVoted', className: 'btn-check', type: 'radio', name: 'sortRadio', autocomplete: 'off', checked: false, onchange }),
-        createElement('label', { htmlFor: 'sortVoted', className: 'btn btn-outline-primary' }, 'Most Voted'),
         createElement('input', { ref: el => sortRadio.date = el, id: 'sortNewest', className: 'btn-check', type: 'radio', name: 'sortRadio', autocomplete: 'off', checked: false, onchange }),
         createElement('label', { htmlFor: 'sortNewest', className: 'btn btn-outline-primary' }, 'Most Recent'),
+        createElement('input', { ref: el => sortRadio.voteCount = el, id: 'sortVoted', className: 'btn-check', type: 'radio', name: 'sortRadio', autocomplete: 'off', checked: false, onchange }),
+        createElement('label', { htmlFor: 'sortVoted', className: 'btn btn-outline-primary' }, 'Most Voted'),
+        createElement('input', { ref: el => sortRadio.title = el, id: 'sortAZ', className: 'btn-check', type: 'radio', name: 'sortRadio', autocomplete: 'off', checked: false, onchange }),
+        createElement('label', { htmlFor: 'sortAZ', className: 'btn btn-outline-primary' }, 'A - Z'),
     ]);
 
-    return { sortElement, sortRadio }
+    return { sortElement, sortRadio };
 }
 
 function createPorts(ports, search) {
@@ -458,6 +481,31 @@ function createDropdowns({ values, onchange }) {
 //#endregion
 
 //#region Filter cards
+function defaultFilterState(filterState) {
+    const searchParams = new URLSearchParams(location.search);
+
+    return {
+        search: searchParams.get('search') ?? filterState?.search ?? '',
+        sort: {
+            date: true,
+            voteCount: false,
+            title: false,
+            ...filterState?.sort,
+        },
+        values: {
+            status: {},
+            feasibility: {},
+            engine: {},
+            category: {},
+            content: {},
+            license: {},
+            language: {},
+            dependency: {},
+            ...filterState?.values,
+        },
+    };
+}
+
 function getFilterState({ searchInput, sortRadio, checkboxes }) {
     return {
         search: searchInput.value.trim(),
@@ -472,7 +520,7 @@ function getFilterState({ searchInput, sortRadio, checkboxes }) {
             language: getCheckedValues(checkboxes.language),
             dependency: getCheckedValues(checkboxes.dependency),
         },
-    }
+    };
 }
 
 function setFilterState({ searchInput, sortRadio, checkboxes }, filterState) {
@@ -655,16 +703,5 @@ function createCard(port) {
             ]),
         ]),
     ]);
-}
-
-const portCardsMap = new Map();
-function getCard(port) {
-    if (portCardsMap.has(port.id)) {
-        return portCardsMap.get(port.id);
-    } else {
-        const card = createCard(port);
-        portCardsMap.set(port.id, card);
-        return card;
-    }
 }
 //#endregion
