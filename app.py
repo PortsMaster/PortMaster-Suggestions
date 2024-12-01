@@ -740,33 +740,38 @@ def profile(userinfo,admin,moderator):
 @requires_auth
 def moderator(userinfo,admin,moderator):
     loggedin,username,userid,moderator,admin = check_priviledges()
-    admins = Admin.query.all()
-    moderators = Moderator.query.all()
-    suggestions = Suggestion.query.all()
-    for suggestion in suggestions:
-        if "https" not in suggestion.imageurl:
-            suggestion.brokenimage = True
-    users = User.query.all()
-    for user in users:
-        isAdmin = Admin.query.filter_by(userid=user.userid).first()
-        if isAdmin:
-            user.admin = True
-    for suggestion in suggestions:
-        user = User().query.filter_by(userid=suggestion.userid).first()
-        if user:
-            suggestion.creator = user.idpname
-    bans = Ban.query.all()
-    for ban in bans:
-        user = User().query.filter_by(userid=ban.userid).first()
-        if user:
-            ban.idpname = user.idpname
-            ban.displayname = user.displayname
-            ban.contact = user.contact
-    return render_template('moderator.html',admin=admin,moderator=moderator,loggedin=loggedin,admins=admins,moderators=moderators,suggestions=suggestions,users=users,bans=bans)
+    if moderator or admin:
+        admins = Admin.query.all()
+        moderators = Moderator.query.all()
+        suggestions = Suggestion.query.all()
+        for suggestion in suggestions:
+            if "https" not in suggestion.imageurl:
+                suggestion.brokenimage = True
+        users = User.query.all()
+        for user in users:
+            isAdmin = Admin.query.filter_by(userid=user.userid).first()
+            if isAdmin:
+                user.admin = True
+        for suggestion in suggestions:
+            user = User().query.filter_by(userid=suggestion.userid).first()
+            if user:
+                suggestion.creator = user.idpname
+        bans = Ban.query.all()
+        for ban in bans:
+            user = User().query.filter_by(userid=ban.userid).first()
+            if user:
+                ban.idpname = user.idpname
+                ban.displayname = user.displayname
+                ban.contact = user.contact
+        return render_template('moderator.html',admin=admin,moderator=moderator,loggedin=loggedin,admins=admins,moderators=moderators,suggestions=suggestions,users=users,bans=bans)
+    else:
+        return redirect('/')
 
 @app.route("/admin")
 @requires_auth
 def admin(userinfo,admin,moderator):
+    if not admin:
+        return redirect('/')
     loggedin = has_session()
     admins = Admin.query.all()
     for dbadmin in admins:
