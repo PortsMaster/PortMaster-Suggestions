@@ -473,7 +473,11 @@ def suggestion(userinfo,admin,moderator):
 def new_suggestion(userinfo,admin,moderator):
     loggedin = True
     suggestions = Suggestion.query.all()
-    return render_template('new_suggestion.html',admin=admin,moderator=moderator,loggedin=loggedin,suggestion_content=suggestion_content,suggestions=suggestions)
+    if admin or moderator:
+        return render_template('new_suggestion.html',admin=admin,moderator=moderator,loggedin=loggedin,suggestion_content=suggestion_content,suggestions=suggestions)
+    else:
+        return redirect('/')
+
 
 @app.route("/remove-privilege",methods=['GET'])
 @requires_auth

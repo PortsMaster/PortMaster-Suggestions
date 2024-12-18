@@ -13,14 +13,14 @@
         Moderator
       </a>
     </li>
-  {% endif %}
-
-  {% if admin == True or moderator == True or loggedin == True %}
     <li class="nav-item">
       <a aria-current="page" class="nav-link active" href="new-suggestion">
         Submit Suggestion
       </a>
     </li>
+  {% endif %}
+
+  {% if admin == True or moderator == True or loggedin == True %}
     <li class="nav-item">
       <a aria-current="page" class="nav-link active" href="profile">
         Profile
